@@ -1,0 +1,50 @@
+### Java ###
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Virtual machine crash logs
+hs_err_pid*
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+### Eclipse ###
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+# Eclipse specific build files
+bin/
+tmp/
+
+# Ignore Eclipse working sets files
+*.launch
+
+# Ignore generated files from Eclipse
+.apt_generated/
+.factorypath
+.springBeans
+
+### macOS ###
+# macOS specific files
+.DS_Store
+
+### Other ###
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+*.swo
+
