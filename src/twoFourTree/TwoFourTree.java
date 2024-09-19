@@ -16,18 +16,30 @@ public class TwoFourTree {
         TwoFourTreeItem centerRightChild;
 
         public boolean isTwoNode() {
+        	if(values == 1) {
+        		return true;
+        	}
             return false;
         }
 
         public boolean isThreeNode() {
+        	if(values == 2) {
+        		return true;
+        	}
             return false;
         }
 
         public boolean isFourNode() {
+        	if(values == 3) {
+        		return true;
+        	}
             return false;
         }
 
         public boolean isRoot() {
+        	if(parent == null) {
+        		return true;
+        	}
             return false;
         }
 
@@ -61,19 +73,19 @@ public class TwoFourTree {
         	values = 3; //set values variable to 2 so since 3 node holds two values
         }
 
-        private void printIndents(int indent) {
+        private void printIndents(int indent) { //this is just for formatting will allow us to print 2-4 tree pretty
             for(int i = 0; i < indent; i++) System.out.printf("  ");
         }
 
-        public void printInOrder(int indent) {
-            if(!isLeaf) leftChild.printInOrder(indent + 1);
+        public void printInOrder(int indent) { //inOrder traversal of the tree
+            if(!isLeaf) leftChild.printInOrder(indent + 1); //go all the way left first once we find theres a leaf we want to print value 1
             printIndents(indent);
             System.out.printf("%d\n", value1);
-            if(isThreeNode()) {
-                if(!isLeaf) centerChild.printInOrder(indent + 1);
+            if(isThreeNode()) { //then itll return up call stack and print previous value 1's and check if we are in a 3 node with two items
+                if(!isLeaf) centerChild.printInOrder(indent + 1); //if we are the centerChild is the nect smallest item so call recursively on that
                 printIndents(indent);
-                System.out.printf("%d\n", value2);
-            } else if(isFourNode()) {
+                System.out.printf("%d\n", value2); //once it is done printing value in centerchild well print the second value of before nodes
+            } else if(isFourNode()) { //same for four node
                 if(!isLeaf) centerLeftChild.printInOrder(indent + 1);
                 printIndents(indent);
                 System.out.printf("%d\n", value2);
@@ -81,11 +93,14 @@ public class TwoFourTree {
                 printIndents(indent);
                 System.out.printf("%d\n", value3);
             }
-            if(!isLeaf) rightChild.printInOrder(indent + 1);
+            if(!isLeaf) rightChild.printInOrder(indent + 1); //once we are done with all the left stuff we can check the right child since these are greatest values and print them
         }
-    }
-
-    TwoFourTreeItem root = null;
+    }//end of private class TwoFourTreeItem 
+    
+    
+    //all functions below this are the ones we need to fill outthat give the tree its functionality. The TwoFourTreeItem class is private but internal so we can use it here but we dont want outside classes callign it
+    
+    TwoFourTreeItem root;
 
     public boolean addValue(int value) {
         return false;
@@ -103,7 +118,7 @@ public class TwoFourTree {
         if(root != null) root.printInOrder(0);
     }
 
-    public TwoFourTree() { //constructor for the TwoFourTree class this gets called in App.Java. Will probably initialize the root or what not in here
-
+    public TwoFourTree() { //constructor for the TwoFourTree class this gets called in App.Java. Initialize the root of our tree here
+    	root = null;
     }
 }
