@@ -175,9 +175,41 @@ public class TwoFourTree {
     	TwoFourTreeItem current = root;
     	
     	while(current != null) {
-   
-    		//as we go down to find where to place the value we split the other 4 nodes		
     		
+    		
+    		TwoFourTreeItem last = current; //need to keep a last variable so that once we exit the loop we have the location of where we are inserting a node cant use current because it will point to null.
+    		//node we are on is a TwoNode
+    		
+    		if(current.isTwoNode()){//as we go down to find where to place the value we split the other 4 nodes
+    			if(value < current.value1) {
+    				current = current.leftChild;
+    			}
+    			else {
+    				current = current.rightChild;
+    			}
+    		}
+    		
+    		//node we are on while traversing is a ThreeeNode
+    		
+    		else if(current.isThreeNode()) {
+    			
+    			if(value < current.value1) {
+    				current = current.leftChild;
+    			}
+    			else if(value > current.value2){
+    				current = current.rightChild;
+    			}
+    			else {
+    				current = current.centerChild;
+    			}
+    			
+    		}
+    		
+    		//else means node we are on is a 4 node meaning we have to split it
+    		
+    		else {
+    			
+    		}
     	}
     	
         return false; //return false if value wasn't added successfully
@@ -185,36 +217,36 @@ public class TwoFourTree {
 
     private void addValueToNodeWithSpace(TwoFourTreeItem node, int value) { //this function I made to clean up the insert function a bit still need to figure out how to make generic. It is to add a value to a node that has space
     	
-    	if(root.isTwoNode()) {
-    		if(value < root.value1) {
-    			root.value2 = root.value1;
-    			root.value1 = value;
-    			root.values++;
+    	if(node.isTwoNode()) {
+    		if(value < node.value1) {
+    			node.value2 = node.value1;
+    			node.value1 = value;
+    			node.values++;
     		}
     		else {
-    			root.value2 = value;
-    			root.values++;
+    			node.value2 = value;
+    			node.values++;
     		}
     	}
     	
     	//root has two items in it
     	
-    	if(root.isThreeNode()) {
-    		if(value < root.value2 && value > root.value1) {
-    			root.value3 = root.value2;
-    			root.value2 = value;
-    			root.values++;
+    	if(node.isThreeNode()) {
+    		if(value < node.value2 && value > node.value1) {
+    			node.value3 = root.value2;
+    			node.value2 = value;
+    			node.values++;
     		}
     		
-    		else if(value < root.value1) {
-    			root.value3 = root.value2;
-    			root.value2 = root.value1;
-    			root.value1 = value;
-    			root.values++;
+    		else if(value < node.value1) {
+    			node.value3 = node.value2;
+    			node.value2 = node.value1;
+    			node.value1 = value;
+    			node.values++;
     		}
     		else {
-    			root.value3 = value;
-    			root.values++;
+    			node.value3 = value;
+    			node.values++;
     		}
     		
     	}
