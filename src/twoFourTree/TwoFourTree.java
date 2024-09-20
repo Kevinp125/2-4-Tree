@@ -205,12 +205,17 @@ public class TwoFourTree {
     			
     		}
     		
-    		//else means node we are on is a 4 node meaning we have to split it
+    		/*else means node we are on is a 4 node meaning we have to split it.
+    		 * Remember try here to implement a more generic function that is for splitting internal 4 nodes.
+    		 */
     		
     		else {
     			
     		}
-    	}
+    	}//end of while loop
+    	
+    	//Once we exit while loop and did all the splitting of four nodes on our way down last should be holding the node in which we have to insert our value
+    	//Call our addValueToNodeWithSpace function here so that it gets placed in sorted order in whatever node it has to go in.
     	
         return false; //return false if value wasn't added successfully
     }
