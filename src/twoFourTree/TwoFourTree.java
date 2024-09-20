@@ -44,6 +44,7 @@ public class TwoFourTree {
         	}
             return false;
         }
+
         
 
         public TwoFourTreeItem(int value1) { //constructor that creates a 2-node a node with only 1 value
@@ -126,23 +127,74 @@ public class TwoFourTree {
     		return true;
     	}
     	
+    	/*
+    	 * Other special case when the root needs to be split. This adds a height of one to the tree that is why it is a special case. 
+    	   Whenever we split a four node down the tree the middle value just gets added to an above two or three node since we split 4 nodes on the way down.
+    	   Probably make a function that splits these internal four nodes as it is different than the root case.
+    	 */
     	
-    	//root only has one item in it
+    	if(root.isFourNode()) {
+    		
+    		//if root is a fourNode it means it has four children we need to split it up
+    		
+    		TwoFourTreeItem newNodeLeft = new TwoFourTreeItem(root.value1); //make a left two node with the first value in the current 4 node
+    		TwoFourTreeItem newNodeRight = new TwoFourTreeItem(root.value3); //make a right two node with the last value in the current 4 node
+    	
+    		/*
+    		 * In below if statement we are checking if we need to do child reassignment. Since the root is a 4 node it must have 4 children.
+    		 * Therefore if only one of the root's children is null all of them are null, therefore we cant acess root.XChild because it will be
+    		 * null. So if any child ISNT null we reassign all the childs of the old root (4 node) that we are in the process of splitting to the two
+    		 * new nodes we created above. Reparent everything as well.
+    		 */
+    		
+    		if(root.leftChild != null) { 
+    			newNodeLeft.leftChild = root.leftChild;
+        		newNodeLeft.rightChild = root.centerLeftChild;
+        		newNodeRight.leftChild = root.centerRightChild;
+        		newNodeRight.rightChild = root.rightChild;
+        		root.leftChild.parent = newNodeLeft;
+        		root.centerLeftChild.parent = newNodeLeft;
+        		root.rightChild.parent = newNodeRight;
+        		root.centerRightChild.parent = newNodeRight;
+    			
+    		}
+    		
+    		//Once that is done let us promote the middle value of the root 4 node
+    		
+    		TwoFourTreeItem newPromotedNode = new TwoFourTreeItem(root.value2); //promoting middle value
+    		newPromotedNode.leftChild = newNodeLeft; //make new promoted values left child the Left two node we made above
+    		newPromotedNode.rightChild = newNodeRight; //make new promoted values right child the Right two node we made above
+    		newNodeLeft.parent = newPromotedNode; //reparent as well
+    		newNodeRight.parent = newPromotedNode;
+    		root = newPromotedNode; //once everything has been split and we assigned all the children of the old root to our new twonodes we can make the newPromotedNode the new root.
+    	}
+    	
+    	
+    	//Here we are going to work on traversal since we handled the special case of the root
+    	
+    	TwoFourTreeItem current = root;
+    	
+    	while(current != null) {
+   
+    		//as we go down to find where to place the value we split the other 4 nodes		
+    		
+    	}
+    	
+        return false; //return false if value wasn't added successfully
+    }
+
+    private void addValueToNodeWithSpace(TwoFourTreeItem node, int value) { //this function I made to clean up the insert function a bit still need to figure out how to make generic. It is to add a value to a node that has space
     	
     	if(root.isTwoNode()) {
     		if(value < root.value1) {
     			root.value2 = root.value1;
     			root.value1 = value;
     			root.values++;
-    			System.out.println("added to two node values is now" + root.values);
     		}
     		else {
     			root.value2 = value;
     			root.values++;
-    			System.out.println("added to two node values is now" + root.values);
     		}
-   
-    		return true;
     	}
     	
     	//root has two items in it
@@ -152,7 +204,6 @@ public class TwoFourTree {
     			root.value3 = root.value2;
     			root.value2 = value;
     			root.values++;
-    			System.out.println("added to two node values is now" + root.values);
     		}
     		
     		else if(value < root.value1) {
@@ -160,22 +211,17 @@ public class TwoFourTree {
     			root.value2 = root.value1;
     			root.value1 = value;
     			root.values++;
-    			System.out.println("added to two node values is now" + root.values);
     		}
     		else {
     			root.value3 = value;
     			root.values++;
-    			System.out.println("added to two node values is now" + root.values);
     		}
     		
-    		return true;
-    		
-    		
     	}
-    	
-        return false; //return false if value wasn't added successfully
+   	
     }
-
+    
+    
     public boolean hasValue(int value) {
         return false; //return false if we didnt find the value
     }
