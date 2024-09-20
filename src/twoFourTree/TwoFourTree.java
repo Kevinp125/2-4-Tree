@@ -1,3 +1,5 @@
+//**NO DUPLICATES IN THIS TREE
+
 package twoFourTree;
 public class TwoFourTree {
 	
@@ -46,6 +48,8 @@ public class TwoFourTree {
 
         public TwoFourTreeItem(int value1) { //constructor that creates a 2-node a node with only 1 value
         	this.value1 = value1;
+        	this.value2 = 0; //we do this in case we want to add more values to this 2-node later on
+        	this.value3 = 0;
         	parent = null;			//set all pointers equal to null
         	leftChild = null;
         	rightChild = null;
@@ -56,6 +60,7 @@ public class TwoFourTree {
         public TwoFourTreeItem(int value1, int value2) { //constructor that creates a 3-node a node with only 2 values 
         	this.value1 = value1;
         	this.value2 = value2;
+        	this.value3 = 0;
         	parent = null;			//set all pointers equal to null
         	leftChild = null;
         	rightChild = null;
@@ -107,32 +112,86 @@ public class TwoFourTree {
     TwoFourTreeItem root;
 
     public boolean addValue(int value) {
+  
+    /*Below cases all cover when we are inserting values into a brand new tree
+     * We need to make the root point to first node and then add other values in that same
+     * node to make it a 4 node so it can later split
+     */
     	
-    	if(root == null) { //special case there isn't a tree at all
-    		TwoFourTreeItem newNode = new TwoFourTreeItem(value);
+    	//special case there isn't a tree at all
+    	
+    	if(root == null) { 
+    		TwoFourTreeItem newNode = new TwoFourTreeItem(value); 
     		root = newNode;
+    		return true;
     	}
     	
-    	if(root.isFourNode()) {
-    		TwoFourTreeItem newNode = new TwoFourTreeItem(root.);
+    	
+    	//root only has one item in it
+    	
+    	if(root.isTwoNode()) {
+    		if(value < root.value1) {
+    			root.value2 = root.value1;
+    			root.value1 = value;
+    			root.values++;
+    			System.out.println("added to two node values is now" + root.values);
+    		}
+    		else {
+    			root.value2 = value;
+    			root.values++;
+    			System.out.println("added to two node values is now" + root.values);
+    		}
+   
+    		return true;
+    	}
+    	
+    	//root has two items in it
+    	
+    	if(root.isThreeNode()) {
+    		if(value < root.value2 && value > root.value1) {
+    			root.value3 = root.value2;
+    			root.value2 = value;
+    			root.values++;
+    			System.out.println("added to two node values is now" + root.values);
+    		}
+    		
+    		else if(value < root.value1) {
+    			root.value3 = root.value2;
+    			root.value2 = root.value1;
+    			root.value1 = value;
+    			root.values++;
+    			System.out.println("added to two node values is now" + root.values);
+    		}
+    		else {
+    			root.value3 = value;
+    			root.values++;
+    			System.out.println("added to two node values is now" + root.values);
+    		}
+    		
+    		return true;
+    		
     		
     	}
-        return false;
+    	
+        return false; //return false if value wasn't added successfully
     }
 
     public boolean hasValue(int value) {
-        return false;
+        return false; //return false if we didnt find the value
     }
 
     public boolean deleteValue(int value) {
-        return false;
+        return false; 
     }
 
     public void printInOrder() {
-        if(root != null) root.printInOrder(0);
+//        if(root != null) root.printInOrder(0);
+    	System.out.println("Value 1 in root = " + root.value1);
+    	System.out.println("Value 2 in root = " + root.value2);
+    	System.out.println("Value 3 in root = " + root.value3);
     }
 
     public TwoFourTree() { //constructor for the TwoFourTree class this gets called in App.Java. Initialize the root of our tree here
     	root = null;
     }
-}
+}//end of public TwoFourTree class
