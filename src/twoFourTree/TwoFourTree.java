@@ -315,6 +315,8 @@ public class TwoFourTree {
         				addValueToNode(current.parent, current.value2);
         				current.parent.centerLeftChild = newNodeRight;
         				current.parent.leftChild = newNodeLeft;
+        				current.parent.centerRightChild = current.parent.centerChild;
+        				current.parent.centerChild = null; // No more use for centerChild after reassignments
         				current = current.parent;
         			}
         			
@@ -322,6 +324,8 @@ public class TwoFourTree {
         				addValueToNode(current.parent, current.value2);
         				current.parent.centerRightChild = newNodeLeft;
         				current.parent.rightChild = newNodeRight;
+        				current.parent.centerLeftChild = current.parent.centerChild;
+        				current.parent.centerChild = null; // Reset original centerChild
         				current = current.parent;
         			}
         			
