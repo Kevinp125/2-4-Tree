@@ -54,34 +54,37 @@ public class TwoFourTree {
         	parent = null;			//set all pointers equal to null
         	leftChild = null;
         	rightChild = null;
+        	centerChild = null;
+        	centerLeftChild = null;
+        	centerRightChild = null;
         	values = 1; //set values to 1 since a two node only holds one value
         	isLeaf = true; //by default when a node is created it is technically a leaf (has no children) we will update this variable whenever node becomes an internal node
         }
 
-        public TwoFourTreeItem(int value1, int value2) { //constructor that creates a 3-node a node with only 2 values 
-        	this.value1 = value1;
-        	this.value2 = value2;
-        	this.value3 = 0;
-        	parent = null;			//set all pointers equal to null
-        	leftChild = null;
-        	rightChild = null;
-        	centerChild = null;
-        	values = 2; //set values variable to 2 so since 3 node holds two values
-        	isLeaf = true;
-        }
-
-        public TwoFourTreeItem(int value1, int value2, int value3) { //constructor that creates a 4-node a node with only 2 values
-        	this.value1 = value1;
-        	this.value2 = value2;
-        	this.value3 = value3;
-        	parent = null;			//set all pointers equal to null
-        	leftChild = null;
-        	rightChild = null;
-        	centerLeftChild = null;
-        	centerRightChild = null;
-        	values = 3; //set values variable to 2 so since 3 node holds two values
-        	isLeaf = true; 
-        }
+//        public TwoFourTreeItem(int value1, int value2) { //constructor that creates a 3-node a node with only 2 values 
+//        	this.value1 = value1;
+//        	this.value2 = value2;
+//        	this.value3 = 0;
+//        	parent = null;			//set all pointers equal to null
+//        	leftChild = null;
+//        	rightChild = null;
+//        	centerChild = null;
+//        	values = 2; //set values variable to 2 so since 3 node holds two values
+//        	isLeaf = true;
+//        }
+//
+//        public TwoFourTreeItem(int value1, int value2, int value3) { //constructor that creates a 4-node a node with only 2 values
+//        	this.value1 = value1;
+//        	this.value2 = value2;
+//        	this.value3 = value3;
+//        	parent = null;			//set all pointers equal to null
+//        	leftChild = null;
+//        	rightChild = null;
+//        	centerLeftChild = null;
+//        	centerRightChild = null;
+//        	values = 3; //set values variable to 2 so since 3 node holds two values
+//        	isLeaf = true; 
+//        }
 
         private void printIndents(int indent) { //this is just for formatting will allow us to print 2-4 tree pretty
             for(int i = 0; i < indent; i++) System.out.printf("  ");
@@ -108,7 +111,7 @@ public class TwoFourTree {
     }//end of private class TwoFourTreeItem 
     
     
-    //all functions below this are the ones we need to fill out that give the tree its functionality. The TwoFourTreeItem class is private but internal so we can use it here but we dont want outside classes callign it
+    //all functions below this are the ones we need to fill out that give the tree its functionality. The TwoFourTreeItem class is private but internal so we can use it here but we don't want outside classes calling it
     
     TwoFourTreeItem root;
 
@@ -125,7 +128,7 @@ public class TwoFourTree {
     		TwoFourTreeItem newNode = new TwoFourTreeItem(value); 
     		root = newNode;
     		return true;
-    	}
+    	}//end of checking if root is empty
     	
     	/*
     	 * Other special case when the root needs to be split. This adds a height of one to the tree that is why it is a special case. 
@@ -167,7 +170,8 @@ public class TwoFourTree {
     		newNodeLeft.parent = newPromotedNode; //reparent as well
     		newNodeRight.parent = newPromotedNode;
     		root = newPromotedNode; //once everything has been split and we assigned all the children of the old root to our new twonodes we can make the newPromotedNode the new root.
-    	}
+    		root.isLeaf = false; //change this to false since the root now has children
+    	}//end of checking if root is 4node
     	
     	
     	//Here we are going to work on traversal since we handled the special case of the root
@@ -177,14 +181,15 @@ public class TwoFourTree {
     	while(current != null) {
     		
     		
-    		TwoFourTreeItem last = current; //need to keep a last variable so that once we exit the loop we have the location of where we are inserting a node cant use current because it will point to null.
-    		//node we are on is a TwoNode
+    		TwoFourTreeItem last = current; //need to keep a last variable so that once we exit the loop we have the location of where we are inserting a value cant use current because it will point to null.
     		
-    		if(current.isTwoNode()){//as we go down to find where to place the value we split the other 4 nodes
-    			if(value < current.value1) {
+    		
+    		//node we are on is a TwoNode
+    		if(current.isTwoNode()){
+    			if(value < current.value1) { //if value we want to insert is less than value in our two node go to the left
     				current = current.leftChild;
     			}
-    			else {
+    			else { //else go to right
     				current = current.rightChild;
     			}
     		}
@@ -193,24 +198,83 @@ public class TwoFourTree {
     		
     		else if(current.isThreeNode()) {
     			
-    			if(value < current.value1) {
+    			if(value < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
     				current = current.leftChild;
     			}
-    			else if(value > current.value2){
+    			else if(value > current.value2){ //if value we want to insert is greater than the 3 nodes greatest value move to right
     				current = current.rightChild;
     			}
-    			else {
+    			else { //else means the value is in between the 3 nodes two values so traverse down the center child.
     				current = current.centerChild;
     			}
     			
     		}
     		
     		/*else means node we are on is a 4 node meaning we have to split it.
-    		 * Remember try here to implement a more generic function that is for splitting internal 4 nodes.
+    		 * In the while loop we are just going to focus on splitting the 4 node correctly
+    		 * and promoting the value and setting current back to its parent so we can continue
+    		 * traversing with the newly split 4 node.
     		 */
     		
     		else {
-    			
+    	
+        		TwoFourTreeItem newNodeLeft = new TwoFourTreeItem(current.value1); //make a left two node with the first value in the current 4 node
+        		TwoFourTreeItem newNodeRight = new TwoFourTreeItem(current.value3); //make a right two node with the last value in the current 4 node
+        	
+        		
+        		
+        		if(!current.isLeaf) { //same logic as when we split the root. 
+        			newNodeLeft.leftChild = current.leftChild;
+            		newNodeLeft.rightChild = current.centerLeftChild;
+            		newNodeRight.leftChild = current.centerRightChild;
+            		newNodeRight.rightChild = current.rightChild;
+            		current.leftChild.parent = newNodeLeft;
+            		current.centerLeftChild.parent = newNodeLeft;
+            		current.rightChild.parent = newNodeRight;
+            		current.centerRightChild.parent = newNodeRight;
+        			
+        		}
+        		
+        		//once we are done making our two new 2nodes we need to promote the middle value of our old 4 node and reassign the 4 nodes parent to point to the new 2 nodes. This will vary depending on what kind of node the parent is.
+        		
+        		
+        		if(current.parent.isTwoNode()) { //if the parent of the 4 node we are splitting internally is a 2 node becoming a 3 node (due to promotion) we only have 3 parent references to worry about.
+        			
+        			if(current.value2 < current.parent.value1) { //if the value we are promoting is less than value 1 in above 2 node we know the 4 node was on the left side of its parent
+        				
+        				addValueToNode(current.parent, current.value2);//call function to promote value in right place 
+      
+            			current.parent.leftChild = newNodeLeft; //assign the above now 3 node with value we added in line before leftChild to the newNode we created for split
+            			current.parent.centerChild = newNodeRight; //and then to the now 3 node after adding the promoted value assign its centerChild to the newNodeRight we created for the split
+            			current = current.parent; //once all of that is done the 4 node no longer exists so we want to move current back up to its parent so in the next iteration of the loop it goes down the right way.
+        			}
+        			else { //same process here except the 4 node was on the right side of the parent so the reparenting is slightly different
+        				
+        				addValueToNode(current.parent, value);
+        				
+        				current.parent.centerChild = newNodeLeft;
+            			current.parent.rightChild = newNodeRight;
+            			current = current.parent;
+        			}
+        			
+        		}
+        		
+        		
+      
+        		else if(current.parent.isThreeNode()){ //if the parent of the 4 node we are splitting internally is a 3 node becoming a 4 node (due to promotion) we have 4 parent references to worry about.
+        			
+        			
+        			
+        			
+        			
+        			
+        			
+        			//call function to put value in right place
+        		
+        			current = current.parent;
+        			
+        		}
+        	
     		}
     	}//end of while loop
     	
@@ -220,7 +284,7 @@ public class TwoFourTree {
         return false; //return false if value wasn't added successfully
     }
 
-    private void addValueToNodeWithSpace(TwoFourTreeItem node, int value) { //this function I made to clean up the insert function a bit still need to figure out how to make generic. It is to add a value to a node that has space
+    private void addValueToNode(TwoFourTreeItem node, int value) { //this function I made to clean up the insert function a bit still need to figure out how to make generic. It is to add a value to a node that has space
     	
     	if(node.isTwoNode()) {
     		if(value < node.value1) {
