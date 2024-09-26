@@ -138,7 +138,7 @@ public class TwoFourTree {
     		last = current; 
     		
     		
-    		if(current.isFourNode()) { //check first if what we are on is a FourNode 
+    		if(current.isFourNode()) { //check first if what we are on is a FourNode
     			
         		splitFourNode(current); //if it is call the function that will split it.
         		
@@ -165,7 +165,7 @@ public class TwoFourTree {
     		
     		//node we are on while traversing is a ThreeeNode
     		
-    		else {
+    		else if(current.isThreeNode()){
     			
     			if(value < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
     				current = current.leftChild;
@@ -190,8 +190,6 @@ public class TwoFourTree {
     
     }//end of addValue function
     
-     	
- 
     private void splitFourNode(TwoFourTreeItem fourNode) { //function takes in our current node from addValue (since it is a 4 node) and splits it 
     	
     	//when splitting a 4 node we have to create two new nodes. A left one and a right one no matter what so doing this globally below.
@@ -229,7 +227,6 @@ public class TwoFourTree {
 		
 		else { //else means it is an internal node
 			
-			
 			if(fourNode.parent.isTwoNode()) { //if fourNode.parent is a TwoNode we only need to worry about 3 references from the parent because when we promote a value to the middle it becomes a 3 node
 				if(fourNode == fourNode.parent.leftChild) { //checks if FourNode is the leftChild of the parent so we can adjust references properly.
 					addValueToNode(fourNode.parent, fourNode.value2); //add to the parent node the FourNode's middle value
@@ -238,18 +235,18 @@ public class TwoFourTree {
 					newNodeLeft.parent = fourNode.parent; 
 					newNodeRight.parent = fourNode.parent;
 				}
-				else { //else means that the fourNode is on the right side of its parent node so the references we need to adjust change slightl.
+				else { //else means that the fourNode is on the right side of its parent node so the references we need to adjust change slightly
 					addValueToNode(fourNode.parent, fourNode.value2);
 					fourNode.parent.centerChild = newNodeLeft; //here since fourNode is on the right of the parent we need to make centerChild of the parent = newNodeLeft
 					fourNode.parent.rightChild = newNodeRight; //and then make the fourNode parents rightChild = to the newNodeRight
 					newNodeLeft.parent = fourNode.parent;
 					newNodeRight.parent = fourNode.parent;
 				}
-				
 			}
 			
 			else { //else means the fourNode's parent is a three node turning into a 4 node. Same logic as above check where the fournode we are splitting is in respect to the parentnode this will affect how we adjust the references.
 				if(fourNode == fourNode.parent.leftChild) { 
+					System.out.println("Inside 4node is leftmost child");
 					addValueToNode(fourNode.parent, fourNode.value2);
 					fourNode.parent.leftChild = newNodeLeft;
 					fourNode.parent.centerLeftChild = newNodeRight;
@@ -266,8 +263,8 @@ public class TwoFourTree {
 					fourNode.centerChild = null;
 					newNodeLeft.parent = fourNode.parent;
 					newNodeRight.parent = fourNode.parent;	
-					
 				}
+				
 				else { //final case if the fournode we are splitting is the right child of its parent
 					addValueToNode(fourNode.parent, fourNode.value2);
 					fourNode.parent.rightChild = newNodeRight;
@@ -279,7 +276,6 @@ public class TwoFourTree {
 				}
 								
 			}
-			
 			
 		}
 		
@@ -325,7 +321,67 @@ public class TwoFourTree {
     
     
     public boolean hasValue(int value) {
-        return false; //return false if we didnt find the value
+    	
+    	if(root == null) //if there isnt a 2-4 tree how are we going to find the value just return false
+    		return false;
+    	
+    	TwoFourTreeItem current = root;
+    	
+    	while(current != null) {
+    		
+    		if(current.value1 == value || current.value2 == value || current.value3 == value) {
+    			return true;
+    		}
+    		
+    		else { //else means node we are on doesn't have the value we are searching for so we have to continue traversing down the tree
+    			
+    			//node we are on is a TwoNode
+        		if(current.isTwoNode()){
+        			if(value < current.value1) { //if value we want to insert is less than value in our two node go to the left
+        				current = current.leftChild;
+        			}
+        			else { //else go to right
+        				current = current.rightChild;
+        			}
+        		}
+        		
+        		//node we are on while traversing is a ThreeeNode
+        		
+        		else if(current.isThreeNode()){
+        			
+        			if(value < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
+        				current = current.leftChild;
+        			}
+        			else if(value > current.value2){ //if value we want to insert is greater than the 3 nodes greatest value move to right
+        				current = current.rightChild;
+        			}
+        			else { //else means the value is in between the 3 nodes two values so traverse down the center child.
+        				current = current.centerChild;
+        			}
+        			
+        		}
+        		
+        		else { //node we are traversing is a four node
+        			if(value<current.value1) { //if value we are searching for is less than the left most value traverse down four nodes left child
+        				current = current.leftChild;
+        			}
+        			else if(value > current.value3) { //if value we are searching for is greater than the fourNodes greatest value traverse down right child
+        				current = current.rightChild;
+        			}
+        			else if(value < current.value3 && value > current.value2) { //if value is in between right most and middle value of 4 node traverse down center rightchild
+        				current = current.centerRightChild;
+        			}
+        			else { //else only leaves the centerLeftChild
+        				current = current.centerLeftChild;
+        			}
+        			
+        		}
+    			
+    		}//end of big else statement for traversal
+    		
+    	}//end of while loop
+    	
+        return false; //If we exit while loop and return true never happened it is because value was never found. Return false to indicate that value isn't in the tree.
     }
 
     public boolean deleteValue(int value) {
