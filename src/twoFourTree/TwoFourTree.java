@@ -3,7 +3,7 @@
 package twoFourTree;
 public class TwoFourTree {
 	
-    private class TwoFourTreeItem { //all of this is just a private class that are all the methods for node manipulation.
+    private class TwoFourTreeItem { //all of this is just a private class that are all the methods for node creation.
         int values;								//this variable will keep track of how many items are in a node
         int value1;                             // always exists.
         int value2;                             // exists iff the node is a 3-node or 4-node.
@@ -111,23 +111,15 @@ public class TwoFourTree {
     }//end of private class TwoFourTreeItem 
     
     
-    
-    
-    
-    
-    
     //all functions below this are the ones we need to fill out that give the tree its functionality. The TwoFourTreeItem class is private but internal so we can use it here but we don't want outside classes calling it
     
     TwoFourTreeItem root;
+    
+ 
 
     public boolean addValue(int value) {
-  
-    /*Below cases all cover when we are inserting values into a brand new tree
-     * We need to make the root point to first node and then add other values in that same
-     * node to make it a 4 node so it can later split
-     */
-    	
-    	//special case there isn't a tree at all
+      
+    	//special case there isn't a tree at all, create a new node and add make root point ot it
     	
     	if(root == null) { 
     		TwoFourTreeItem newNode = new TwoFourTreeItem(value); 
@@ -135,98 +127,28 @@ public class TwoFourTree {
     		return true;
     	}//end of checking if root is empty
     	
-    	/*
-    	 * Other special case when the root needs to be split. This adds a height of one to the tree that is why it is a special case. 
-    	   Whenever we split a four node down the tree the middle value just gets added to an above two or three node since we split 4 nodes on the way down.
-    	   Probably make a function that splits these internal four nodes as it is different than the root case. 
-    	 */
     	
-    	if(root.isFourNode()) {
-    		
-    		//if root is a fourNode it means it has four children we need to split it up
-    		
-    		TwoFourTreeItem newNodeLeft = new TwoFourTreeItem(root.value1); //make a left two node with the first value in the current 4 node
-    		TwoFourTreeItem newNodeRight = new TwoFourTreeItem(root.value3); //make a right two node with the last value in the current 4 node
-    	
-    		/*
-    		 * In below if statement we are checking if we need to do child reassignment. Since the root is a 4 node it must have 4 children.
-    		 * Therefore if only one of the root's children is null all of them are null, therefore we cant acess root.XChild because it will be
-    		 * null. So if any child ISNT null we reassign all the childs of the old root (4 node) that we are in the process of splitting to the two
-    		 * new nodes we created above. Reparent everything as well.
-    		 */
-    		
-    		if(root.leftChild != null) { 
-    			newNodeLeft.leftChild = root.leftChild;
-        		newNodeLeft.rightChild = root.centerLeftChild;
-        		newNodeRight.leftChild = root.centerRightChild;
-        		newNodeRight.rightChild = root.rightChild;
-        		root.leftChild.parent = newNodeLeft;
-        		root.centerLeftChild.parent = newNodeLeft;
-        		root.rightChild.parent = newNodeRight;
-        		root.centerRightChild.parent = newNodeRight;
-        		newNodeLeft.isLeaf = false;
-        		newNodeRight.isLeaf = false;
-    		}
-    		
-    		//Once that is done let us promote the middle value of the root 4 node
-    		
-    		TwoFourTreeItem newPromotedNode = new TwoFourTreeItem(root.value2); //promoting middle value
-    		newPromotedNode.leftChild = newNodeLeft; //make new promoted values left child the Left two node we made above
-    		newPromotedNode.rightChild = newNodeRight; //make new promoted values right child the Right two node we made above
-    		newNodeLeft.parent = newPromotedNode; //reparent as well
-    		newNodeRight.parent = newPromotedNode;
-    		root = newPromotedNode; //once everything has been split and we assigned all the children of the old root to our new twonodes we can make the newPromotedNode the new root.
-    		root.isLeaf = false; //change this to false since the root now has children
-    	}//end of checking if root is 4node
-    	
-    	
-    	//Here we are going to work on traversal since we handled the special case of the root
+    	//Here we are going to work on traversal since we handled the special case of the null root.
     
-    	TwoFourTreeItem current = root;
-    	TwoFourTreeItem last = null;
+    	TwoFourTreeItem current = root; //making current point to root so we don't lose our root when we traverse the tree
+    	TwoFourTreeItem last = null; //need to keep a last variable so that once we exit the loop we have the location of where we are inserting a value can't use current because it will point to null.
     	
     	while(current != null) {
     		
+    		last = current; 
     		
-    		last = current; //need to keep a last variable so that once we exit the loop we have the location of where we are inserting a value cant use current because it will point to null.
     		
-    		if(root.isFourNode()) {
+    		if(current.isFourNode()) { //check first if what we are on is a FourNode 
+    			
+        		splitFourNode(current); //if it is call the function that will split it.
         		
-        		//if root is a fourNode it means it has four children we need to split it up
-        		
-        		TwoFourTreeItem newNodeLeft = new TwoFourTreeItem(root.value1); //make a left two node with the first value in the current 4 node
-        		TwoFourTreeItem newNodeRight = new TwoFourTreeItem(root.value3); //make a right two node with the last value in the current 4 node
-        	
-        		/*
-        		 * In below if statement we are checking if we need to do child reassignment. Since the root is a 4 node it must have 4 children.
-        		 * Therefore if only one of the root's children is null all of them are null, therefore we cant acess root.XChild because it will be
-        		 * null. So if any child ISNT null we reassign all the childs of the old root (4 node) that we are in the process of splitting to the two
-        		 * new nodes we created above. Reparent everything as well.
-        		 */
-        		
-        		if(root.leftChild != null) { 
-        			newNodeLeft.leftChild = root.leftChild;
-            		newNodeLeft.rightChild = root.centerLeftChild;
-            		newNodeRight.leftChild = root.centerRightChild;
-            		newNodeRight.rightChild = root.rightChild;
-            		root.leftChild.parent = newNodeLeft;
-            		root.centerLeftChild.parent = newNodeLeft;
-            		root.rightChild.parent = newNodeRight;
-            		root.centerRightChild.parent = newNodeRight;
-            		newNodeLeft.isLeaf = false;
-            		newNodeRight.isLeaf = false;
-        			
+        		if(current.parent == null) {//then check if current.parent is null this means the 4 node we split was the root so in order to continue traversing to find spot we need to add value 
+        			current = root; //make our current start from the new root
+        		}
+        		else { //else means 4 node we split was an internal node there is something above it. So that we dont have to traverse entire tree from the top just move current up one. 
+        			current = current.parent; //set current to its parent
         		}
         		
-        		//Once that is done let us promote the middle value of the root 4 node
-        		
-        		TwoFourTreeItem newPromotedNode = new TwoFourTreeItem(root.value2); //promoting middle value
-        		newPromotedNode.leftChild = newNodeLeft; //make new promoted values left child the Left two node we made above
-        		newPromotedNode.rightChild = newNodeRight; //make new promoted values right child the Right two node we made above
-        		newNodeLeft.parent = newPromotedNode; //reparent as well
-        		newNodeRight.parent = newPromotedNode;
-        		root = newPromotedNode; //once everything has been split and we assigned all the children of the old root to our new twonodes we can make the newPromotedNode the new root.
-        		root.isLeaf = false; //change this to false since the root now has children
         	}//end of checking if root is 4node
         	
     		
@@ -243,7 +165,7 @@ public class TwoFourTree {
     		
     		//node we are on while traversing is a ThreeeNode
     		
-    		else if(current.isThreeNode()) {
+    		else {
     			
     			if(value < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
     				current = current.leftChild;
@@ -257,90 +179,8 @@ public class TwoFourTree {
     			
     		}
     		
-    		/*else means node we are on is a 4 node meaning we have to split it.
-    		 * In the while loop we are just going to focus on splitting the 4 node correctly
-    		 * and promoting the value and setting current back to its parent so we can continue
-    		 * traversing with the newly split 4 node.
-    		 */
-    		
-    		else {
-    	
-        		TwoFourTreeItem newNodeLeft = new TwoFourTreeItem(current.value1); //make a left two node with the first value in the current 4 node
-        		TwoFourTreeItem newNodeRight = new TwoFourTreeItem(current.value3); //make a right two node with the last value in the current 4 node
         	
-        		
-        		
-        		if(current.leftChild != null) { //same logic as when we split the root. 
-        			newNodeLeft.leftChild = current.leftChild;
-            		newNodeLeft.rightChild = current.centerLeftChild;
-            		newNodeRight.leftChild = current.centerRightChild;
-            		newNodeRight.rightChild = current.rightChild;
-            		current.leftChild.parent = newNodeLeft;
-            		current.centerLeftChild.parent = newNodeLeft;
-            		current.rightChild.parent = newNodeRight;
-            		current.centerRightChild.parent = newNodeRight;
-        			
-        		}
-        		
-        		//once we are done making our two new 2nodes we need to promote the middle value of our old 4 node and reassign the 4 nodes parent to point to the new 2 nodes. This will vary depending on what kind of node the parent is.
-        		
-        		
-        		if(current.parent != null && current.parent.isTwoNode()) { //if the parent of the 4 node we are splitting internally is a 2 node becoming a 3 node (due to promotion) we only have 3 parent references to worry about.
-        			
-        			if(current.value2 < current.parent.value1) { //if the value we are promoting is less than value 1 in above 2 node we know the 4 node was on the left side of its parent
-        				
-        				addValueToNode(current.parent, current.value2);//call function to promote value in right place 
-      
-            			current.parent.leftChild = newNodeLeft; //assign the above now 3 node with value we added in line before leftChild to the newNode we created for split
-            			current.parent.centerChild = newNodeRight; //and then to the now 3 node after adding the promoted value assign its centerChild to the newNodeRight we created for the split
-            			current = current.parent; //once all of that is done the 4 node no longer exists so we want to move current back up to its parent so in the next iteration of the loop it goes down the right way.
-        			}
-        			else { //same process here except the 4 node was on the right side of the parent so the reparenting is slightly different
-        				
-        				addValueToNode(current.parent, current.value2);
-        				
-        				current.parent.centerChild = newNodeLeft;
-            			current.parent.rightChild = newNodeRight;
-            			current = current.parent;
-        			}
-        			
-        		}//end of if block for 4 node being split when its parent is a 2 node becoming a 3 node
-        		
-        		
-      
-        		else if(current.parent != null && current.parent.isThreeNode()){ //if the parent of the 4 node we are splitting internally is a 3 node becoming a 4 node (due to promotion) we have 4 parent references to worry about.
-        			
-        			
-        			if(current.value2 < current.parent.value1) {
-        				addValueToNode(current.parent, current.value2);
-        				current.parent.centerLeftChild = newNodeRight;
-        				current.parent.leftChild = newNodeLeft;
-        				current.parent.centerRightChild = current.parent.centerChild;
-        				current.parent.centerChild = null; // No more use for centerChild after reassignments
-        				current = current.parent;
-        			}
-        			
-        			else if(current.value2 > current.parent.value2) {
-        				addValueToNode(current.parent, current.value2);
-        				current.parent.centerRightChild = newNodeLeft;
-        				current.parent.rightChild = newNodeRight;
-        				current.parent.centerLeftChild = current.parent.centerChild;
-        				current.parent.centerChild = null; // Reset original centerChild
-        				current = current.parent;
-        			}
-        			
-        			else {
-        				addValueToNode(current.parent, current.value2);
-        				current.parent.centerLeftChild = newNodeLeft;
-        				current.parent.centerRightChild = newNodeRight;
-        				current = current.parent;
-        			}
-       			
-        		}//end of if block for splitting a 4 node whose parent is turning into a 4 node after promotion
-        	
-    		}
     	}//end of while loop
-    	
     	
     	addValueToNode(last, value);
     	return true;
@@ -349,39 +189,135 @@ public class TwoFourTree {
     	//Call our addValueToNodeWithSpace function here so that it gets placed in sorted order in whatever node it has to go in.
     
     }//end of addValue function
-
-    private void addValueToNode(TwoFourTreeItem node, int value) { //this function I made to clean up the insert function a bit still need to figure out how to make generic. It is to add a value to a node that has space
+    
+     	
+ 
+    private void splitFourNode(TwoFourTreeItem fourNode) { //function takes in our current node from addValue (since it is a 4 node) and splits it 
     	
-    	if(node.isTwoNode()) {
-    		if(value < node.value1) {
+    	//when splitting a 4 node we have to create two new nodes. A left one and a right one no matter what so doing this globally below.
+    	
+		TwoFourTreeItem newNodeLeft = new TwoFourTreeItem(fourNode.value1); //make a left two node with the first value in the current 4 node
+		TwoFourTreeItem newNodeRight = new TwoFourTreeItem(fourNode.value3); //make a right two node with the last value in the current 4 node
+	
+		//below we check if the four node we got passed in is NOT a leaf. If it isn't this means it has 4 children that all need to be reassigned under the 2 new nodes we made above
+		
+		if(!fourNode.isLeaf) {
+			newNodeLeft.leftChild = fourNode.leftChild;
+    		newNodeLeft.rightChild = fourNode.centerLeftChild;
+    		newNodeRight.leftChild = fourNode.centerRightChild;
+    		newNodeRight.rightChild = fourNode.rightChild;
+    		fourNode.leftChild.parent = newNodeLeft;
+    		fourNode.centerLeftChild.parent = newNodeLeft;
+    		fourNode.rightChild.parent = newNodeRight;
+    		fourNode.centerRightChild.parent = newNodeRight;
+    		newNodeLeft.isLeaf = false; //important to flag that these new nodes we created are no longer leaves since we linked the fournodes children to them.
+    		newNodeRight.isLeaf = false;
+			
+		}
+		
+    	//Ok now that general housekeeping has been done above. Which was creating the two new nodes and reassigning to them the 4 node's children we decide below if the 4 node we are splitting is the root or internal
+		
+		if(fourNode.parent == null) { //if the fourNode.parent is null this means it is the root there we need to make a new root / new level in the tree
+			TwoFourTreeItem newRoot = new TwoFourTreeItem(fourNode.value2); //making a new root with the 4 nodes middle value
+			newRoot.leftChild = newNodeLeft; //make newRoot left child the Left two node we made above
+			newRoot.rightChild = newNodeRight; //make newRoot right child the Right two node we made above
+			newNodeLeft.parent = newRoot; //reparent as well
+			newNodeRight.parent = newRoot;
+			root = newRoot; //once everything has been split and we assigned all the children of the old root to our new twonodes we can make the newPromotedNode the new root.
+			root.isLeaf = false; //change this to false since the root now has children
+		}
+		
+		else { //else means it is an internal node
+			
+			
+			if(fourNode.parent.isTwoNode()) { //if fourNode.parent is a TwoNode we only need to worry about 3 references from the parent because when we promote a value to the middle it becomes a 3 node
+				if(fourNode == fourNode.parent.leftChild) { //checks if FourNode is the leftChild of the parent so we can adjust references properly.
+					addValueToNode(fourNode.parent, fourNode.value2); //add to the parent node the FourNode's middle value
+					fourNode.parent.leftChild = newNodeLeft;
+					fourNode.parent.centerChild = newNodeRight;
+					newNodeLeft.parent = fourNode.parent; 
+					newNodeRight.parent = fourNode.parent;
+				}
+				else { //else means that the fourNode is on the right side of its parent node so the references we need to adjust change slightl.
+					addValueToNode(fourNode.parent, fourNode.value2);
+					fourNode.parent.centerChild = newNodeLeft; //here since fourNode is on the right of the parent we need to make centerChild of the parent = newNodeLeft
+					fourNode.parent.rightChild = newNodeRight; //and then make the fourNode parents rightChild = to the newNodeRight
+					newNodeLeft.parent = fourNode.parent;
+					newNodeRight.parent = fourNode.parent;
+				}
+				
+			}
+			
+			else { //else means the fourNode's parent is a three node turning into a 4 node. Same logic as above check where the fournode we are splitting is in respect to the parentnode this will affect how we adjust the references.
+				if(fourNode == fourNode.parent.leftChild) { 
+					addValueToNode(fourNode.parent, fourNode.value2);
+					fourNode.parent.leftChild = newNodeLeft;
+					fourNode.parent.centerLeftChild = newNodeRight;
+					fourNode.parent.centerRightChild = fourNode.parent.centerChild;
+					fourNode.parent.centerChild = null;
+					newNodeLeft.parent = fourNode.parent;
+					newNodeRight.parent = fourNode.parent;
+				}
+				
+				else if(fourNode == fourNode.parent.centerChild) {
+					addValueToNode(fourNode.parent, fourNode.value2);
+					fourNode.parent.centerLeftChild = newNodeLeft;
+					fourNode.parent.centerRightChild = newNodeRight;
+					fourNode.centerChild = null;
+					newNodeLeft.parent = fourNode.parent;
+					newNodeRight.parent = fourNode.parent;	
+					
+				}
+				else { //final case if the fournode we are splitting is the right child of its parent
+					addValueToNode(fourNode.parent, fourNode.value2);
+					fourNode.parent.rightChild = newNodeRight;
+					fourNode.parent.centerRightChild = newNodeLeft;
+					fourNode.parent.centerLeftChild = fourNode.parent.centerChild;
+					fourNode.parent.centerChild = null;
+					newNodeLeft.parent = fourNode.parent;
+					newNodeRight.parent = fourNode.parent;
+				}
+								
+			}
+			
+			
+		}
+		
+	
+    } //end of split4node function
+
+    private void addValueToNode(TwoFourTreeItem node, int value) { //function just adds a value into a node into the right order since a node can have 3 different values. They need to remain in sorted order.
+    	
+    	if(node.isTwoNode()) { //if it is a twoNode it only has a value1
+    		if(value < node.value1) { //check if value we want to add is less than value1 if it is shift value1 to next place over
     			node.value2 = node.value1;
     			node.value1 = value;
     		}
     		else {
     			node.value2 = value;
     		}
-    		node.values++;
+    		node.values++; //dont forget to increment values counter this allows us to check whether a node is a 2Node 3Node or 4Node
     	}
     	
     	//root has two items in it
     	
-    	else if(node.isThreeNode()) {
+    	else if(node.isThreeNode()) { //if it is a 3node we know values 1 and 2 are already taken
     		
-    		if(value < node.value2 && value > node.value1) {
-    			node.value3 = node.value2;
-    			node.value2 = value;
+    		if(value < node.value2 && value > node.value1) { //if the value we want to insert is in between 1 and 2 
+    			node.value3 = node.value2; //move to value 3 our value 2
+    			node.value2 = value; //which leaves a space for the value we want to insert in the middle
     		}
     		
-    		else if(value < node.value1) {
+    		else if(value < node.value1) { //if the value we want to insert is smaller than the first value we need to shift both value 1 and 2 down 1 so that we can put the smallest value first
     			node.value3 = node.value2;
     			node.value2 = node.value1;
     			node.value1 = value;
     		}
-    		else {
-    			node.value3 = value;
+    		else { //else just means the value we want to insert into this 3 node is the greatest one and that space by default is empty so just put it there.
+    			node.value3 = value; 
     		}
     		
-    		node.values++;
+    		node.values++; //finally dont forget again to update how many values are now in our node.
     		
     	}
    	
@@ -397,12 +333,7 @@ public class TwoFourTree {
     }
 
     public void printInOrder() {
-//    	System.out.println("Inside print order function");
-	if(root != null) root.printInOrder(0);  
-//    	System.out.println("Added first value: " + root.value1);
-//    	System.out.println("Added second value: " + root.leftChild.value1);
-//    	System.out.println("Added third value: " + root.rightChild.value1);
-//    	System.out.println("Added fourth value: " + root.leftChild.value2);
+    	if(root != null) root.printInOrder(0);
     }
 
     public TwoFourTree() { //constructor for the TwoFourTree class this gets called in App.Java. Initialize the root of our tree here

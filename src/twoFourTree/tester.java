@@ -9,12 +9,19 @@ public class tester {
 		twFourTree.addValue(10);
 		twFourTree.addValue(8);
 		twFourTree.addValue(20);
+		twFourTree.addValue(11); //ok so program is breaking whenever we are splitting a 4 node whos above parent is a root 3 node
+		twFourTree.addValue(13);
+		twFourTree.addValue(2);
+		twFourTree.addValue(27);
+		twFourTree.addValue(15);
 		twFourTree.addValue(12);
-		twFourTree.addValue(5);
-		twFourTree.addValue(6);
-		twFourTree.addValue(17);
-		twFourTree.addValue(22);
-		twFourTree.addValue(3); //issue when adding 3 to this tree
+		twFourTree.addValue(1);
+		twFourTree.addValue(3);
+		twFourTree.addValue(39);
+		twFourTree.addValue(50);
+		twFourTree.addValue(42);
+		twFourTree.addValue(16);
+		twFourTree.addValue(19);
 		twFourTree.printInOrder();
 	}
 
