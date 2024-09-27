@@ -182,6 +182,8 @@ public class TwoFourTree {
         	
     	}//end of while loop
     	
+    	
+    	
     	addValueToNode(last, value);
     	return true;
     	
