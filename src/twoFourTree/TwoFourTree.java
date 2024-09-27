@@ -387,7 +387,29 @@ public class TwoFourTree {
     }
 
     public boolean deleteValue(int value) {
-        return false; 
+    	
+    	if(root == null) //if we don't have a tree there is nothing to delete so just return false
+    		return false; 
+    	
+    	if(root.value1 == value || root.value2 == value || root.value3 == value) { //Special case when the value we want to delete is in the root
+    		
+    		if(root.isTwoNode() && root.isLeaf) {
+    			root = null;
+    			return true;
+    		}
+    		
+    		if(root.isTwoNode() && !root.isLeaf) {
+    			//here we have to merge the root with its children so call function for that I guess
+    		}
+    		
+    		if(root.isThreeNode() || root.isFourNode()) {
+    			//logic to just shift values around in the node itself
+    		}
+    	}
+    	
+    	
+    	
+    	return false;
     }
 
     public void printInOrder() {
