@@ -392,6 +392,7 @@ public class TwoFourTree {
     	
     	if(root == null) //if we don't have a tree there is nothing to delete so just return false
     		return false; 
+   
     	
     	if(root.value1 == value || root.value2 == value || root.value3 == value) { //When the value we want to delete is in the root
     		
@@ -404,11 +405,96 @@ public class TwoFourTree {
     			deleteValAndReorder(root, value); 
     			return true;
     		}
+    	
+    	}
+    	
+    	if(root.isTwoNode() && !root.isLeaf) { //if the root is a twoNode and has children we need to either borrow from a sibling or merge root with its children. We do this before entering the loop so everything else goes smoothly.
+    		
+    		if(root.leftChild.isTwoNode() && root.rightChild.isTwoNode()) { //if root is a twoNode we need to strengthen it. If both children are also twoNodes merge them together to make a four node
+    			
+    			TwoFourTreeItem newRoot = new TwoFourTreeItem(root.leftChild.value1); //make a new node and put the value in the roots left child in it
+    			addValueToNode(newRoot, root.value1); //then add to that same node the value in the root
+    			addValueToNode(newRoot, root.rightChild.value1); //and the value in the roots right child
+    			
+    			//then assign all the children of the past twoNodes to what is essentially going to be our new root
+    			newRoot.leftChild = root.leftChild.leftChild; 
+    			newRoot.centerLeftChild = root.leftChild.rightChild;
+    			newRoot.centerRightChild = root.rightChild.leftChild;
+    			newRoot.rightChild = root.rightChild.rightChild;
+    			
+    			if(!root.leftChild.isLeaf) { //if the left child of the old root wasnt a leaf it means it has children we need to reparent these children to point to the new root
+    				newRoot.leftChild.parent = newRoot;
+    				newRoot.centerLeftChild.parent = newRoot;
+    				newRoot.centerRightChild.parent = newRoot;
+    				newRoot.rightChild.parent = newRoot;
+    			}
+    			
+    			root = newRoot; //finally make the root point to our newly merged root.
+    		}
     	}
     	
     	
     	//Now that we handled special cases above we can begin our loop logic below and fixing twoNodes as we go down.
     	
+    	TwoFourTreeItem current = root;  
+    	
+    	while(current != null) {
+    		
+    		if(current.value1 == value || current.value2 == value || current.value3 == value) { //we found value we want to delete
+    			
+    			//delete value and adjust accordingly depening on the case
+    			
+    			if(current.isLeaf) { //if the value we want to delete is in a leaf all we have to do is delete it
+    				deleteValAndReorder(current, value);
+    			}
+    			
+    			else if(!current.isLeaf) { //this means it is an internal node so find min predecessor of the node
+    				
+    			}
+    			
+    			
+    		}
+    		else {
+    			
+    			if(current.isTwoNode()) {
+    				
+    				//logic to fix the twoNode as we traverse down
+    			}
+    			
+    			//once thats fixed
+    			else if(current.isThreeNode()) {
+    				if(value < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
+        				current = current.leftChild;
+        			}
+        			else if(value > current.value2){ //if value we want to insert is greater than the 3 nodes greatest value move to right
+        				current = current.rightChild;
+        			}
+        			else { //else means the value is in between the 3 nodes two values so traverse down the center child.
+        				current = current.centerChild;
+        			}
+    			}
+    			
+    			else if(current.isFourNode()) {
+    				if(value<current.value1) { //if value we are searching for is less than the left most value traverse down four nodes left child
+        				current = current.leftChild;
+        			}
+        			else if(value > current.value3) { //if value we are searching for is greater than the fourNodes greatest value traverse down right child
+        				current = current.rightChild;
+        			}
+        			else if(value < current.value3 && value > current.value2) { //if value is in between right most and middle value of 4 node traverse down center rightchild
+        				current = current.centerRightChild;
+        			}
+        			else { //else only leaves the centerLeftChild
+        				current = current.centerLeftChild;
+        			}
+    			}	
+    			    			
+    		}
+    		
+    		
+    		
+    		return true;
+    	}//end of while loop
     	
     	
     	
@@ -447,7 +533,9 @@ public class TwoFourTree {
     }
 
     public void printInOrder() {
-    	if(root != null) root.printInOrder(0);
+//    	if(root != null) root.printInOrder(0);
+    	
+    	System.out.println("node one is: | " + root.value1 + " | " + root.value2 + " | " + root.value3 + " | ");
     }
 
     public TwoFourTree() { //constructor for the TwoFourTree class this gets called in App.Java. Initialize the root of our tree here
