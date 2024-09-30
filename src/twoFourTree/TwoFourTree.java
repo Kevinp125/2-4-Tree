@@ -388,28 +388,62 @@ public class TwoFourTree {
 
     public boolean deleteValue(int value) {
     	
+    	//handle all the special cases with the root first.
+    	
     	if(root == null) //if we don't have a tree there is nothing to delete so just return false
     		return false; 
     	
-    	if(root.value1 == value || root.value2 == value || root.value3 == value) { //Special case when the value we want to delete is in the root
+    	if(root.value1 == value || root.value2 == value || root.value3 == value) { //When the value we want to delete is in the root
     		
-    		if(root.isTwoNode() && root.isLeaf) {
+    		if(root.isTwoNode() && root.isLeaf) { //if the root only has a single value and no children than we know that this is the last item to delete in the tree. Make tree null.
     			root = null;
     			return true;
     		}
     		
-    		if(root.isTwoNode() && !root.isLeaf) {
-    			//here we have to merge the root with its children so call function for that I guess
-    		}
-    		
-    		if(root.isThreeNode() || root.isFourNode()) {
-    			//logic to just shift values around in the node itself
+    		if(root.isThreeNode() || root.isFourNode() && root.isLeaf) { //if the root has more than 1 value and it is a leaf we can just remove value from there 
+    			deleteValAndReorder(root, value); 
+    			return true;
     		}
     	}
     	
     	
+    	//Now that we handled special cases above we can begin our loop logic below and fixing twoNodes as we go down.
+    	
+    	
+    	
     	
     	return false;
+    }
+    
+    private void deleteValAndReorder(TwoFourTreeItem node, int delVal) {
+    	
+    	if(node.isThreeNode()) { //three node only has two values
+    		if(delVal == node.value1) { //if the value we want to delete is in the first slot move the second slot to first effectively deleting it
+    			node.value1 = node.value2;
+    			node.value2 = 0;
+    		}
+    		else { //else means the value we want to delete is in the second slot so just change second slots value back to 0 and bam that number erased.
+    			node.value2 = 0; 
+    		}
+    		
+    	}
+    	
+    	else if(node.isFourNode()) { //if node has three values we have a couple more cases
+    		if(delVal == node.value1) { //if value getting removed is the one left most shift everything to the left
+    			node.value1 = node.value2;
+    			node.value2 = node.value3;
+    			node.value3 = 0; //set the empty space now to 0
+    		}
+    		else if(delVal == node.value2) { //if value we want to delete is in the middle just shift value on its right to the left one
+    			node.value2 = node.value3;
+    			node.value3 = 0; //set the empty spot to 0;
+    		}
+    		else { //else means value we are deleting is the one all the way right, so no shifting has to be done just set that place = 0;
+    			node.value3 = 0;
+    		}
+    		
+    	}
+    	
     }
 
     public void printInOrder() {
