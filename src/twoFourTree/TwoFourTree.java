@@ -431,7 +431,36 @@ public class TwoFourTree {
     			
     			root = newRoot; //finally make the root point to our newly merged root.
     		}
-    	}
+    		
+    		
+    		if(root.leftChild.values >= root.rightChild.values) { //we want to steal an element from the child that has the greater amount of elements because itll be furthest away from becoming a two node
+    			
+    			if(root.leftChild.isThreeNode()) { //if the leftChild has two values grab the biggest one
+    				addValueToNode(root, root.leftChild.value2); //add the greater value to the root
+    				deleteValAndReorder(root.leftChild, root.leftChild.value2); //make sure to delete that value from the node we are taking it from
+    				root.leftChild.values--; //decrease values counter from node we are taking it from
+    				root.values++; //and increase values counter for node we are putting it in
+    			}
+    			
+    			else if(root.leftChild.isFourNode()) { //if leftChild has four values grab biggest one which is value 3
+    				addValueToNode(root, root.leftChild.value3);
+    				deleteValAndReorder(root.leftChild, root.leftChild.value3);
+    				root.leftChild.values--;
+    				root.values++;
+    				
+    			}
+    			
+    		}
+    		
+    		else { //else means that the roots right child has more values to steal from so we want to grab the smallest value from the right child and place it in the root
+    			addValueToNode(root, root.rightChild.value1); //Don't need if statements here because there will always be the smallest value in the value1 place
+    			deleteValAndReorder(root.rightChild, root.rightChild.value1);
+    			root.rightChild.values--;
+    			root.values++;
+    
+    		}
+    		
+    	} //end of case dealing with root being a two node and strengthening it by merging with children or borrowing from children.
     	
     	
     	//Now that we handled special cases above we can begin our loop logic below and fixing twoNodes as we go down.
@@ -536,6 +565,12 @@ public class TwoFourTree {
 //    	if(root != null) root.printInOrder(0);
     	
     	System.out.println("node one is: | " + root.value1 + " | " + root.value2 + " | " + root.value3 + " | ");
+    	System.out.println("right child of root now is: | " + root.rightChild.value1 + " | " + root.rightChild.value2 + " | " + root.rightChild.value3 + " | ");
+
+    	System.out.println("left child of root now is: | " + root.leftChild.value1 + " | " + root.leftChild.value2 + " | " + root.leftChild.value3 + " | ");
+
+    	
+    	
     }
 
     public TwoFourTree() { //constructor for the TwoFourTree class this gets called in App.Java. Initialize the root of our tree here
