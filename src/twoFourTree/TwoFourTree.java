@@ -246,9 +246,8 @@ public class TwoFourTree {
 				}
 			}
 			
-			else { //else means the fourNode's parent is a three node turning into a 4 node. Same logic as above check where the fournode we are splitting is in respect to the parentnode this will affect how we adjust the references.
+			else if(fourNode.parent.isThreeNode()){ //else means the fourNode's parent is a three node turning into a 4 node. Same logic as above check where the fournode we are splitting is in respect to the parentnode this will affect how we adjust the references.
 				if(fourNode == fourNode.parent.leftChild) { 
-					System.out.println("Inside 4node is leftmost child");
 					addValueToNode(fourNode.parent, fourNode.value2);
 					fourNode.parent.leftChild = newNodeLeft;
 					fourNode.parent.centerLeftChild = newNodeRight;
@@ -462,11 +461,16 @@ public class TwoFourTree {
     	
     	while(current != null) {
     		
-    		if(current.value1 == value || current.value2 == value || current.value3 == value) { //we found value we want to delete
-    			
+    		if(current.isTwoNode()) {
+				
+				
+			}
+    		
+    		else if(current.value1 == value || current.value2 == value || current.value3 == value) { //we found value we want to delete
     			
     			if(current.isLeaf) { //if the value we want to delete is in a leaf all we have to do is delete it
     				deleteValAndReorder(current, value);
+    				return true; //value was deleted exit
     			}
     			
     			else if(!current.isLeaf) { //this means it is an internal node so find highest number in left subtrtee of node replace it with value we are deleting and delete the other location of that number
@@ -492,6 +496,8 @@ public class TwoFourTree {
     						maxNodeInLeft.value3 = 0;
     						maxNodeInLeft.values--;
     					}
+    					
+    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				}
     				
     				else if(current.isThreeNode() && current.value1 == value) {
@@ -516,6 +522,7 @@ public class TwoFourTree {
     						maxNodeInLeft.values--;
     					}
     					
+    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				} 
     				
     				else if(current.isFourNode() && current.value1 == value) {
@@ -540,6 +547,7 @@ public class TwoFourTree {
     						maxNodeInLeft.values--;
     					}		
     					
+    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				}
     				
     				else if(current.isFourNode() && current.value2 == value) {
@@ -564,7 +572,7 @@ public class TwoFourTree {
     						maxNodeInLeft.values--;
     					}
     					
-    					
+    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				}
     				
     				else if(current.isFourNode() && current.value3 == value) {
@@ -589,6 +597,7 @@ public class TwoFourTree {
     						maxNodeInLeft.values--;
     					}	
     					
+    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				}
     					
     					
@@ -599,14 +608,9 @@ public class TwoFourTree {
     		
     		
     		else { //else means node we are on does not have the value we want to delete so we keep traversing
-    			
-    			if(current.isTwoNode()) {
-    				
-    				//logic to fix the twoNode as we traverse down
-    			}
-    			
+    			   			
     			//once thats fixed
-    			else if(current.isThreeNode()) {
+    			if(current.isThreeNode()) {
     				if(value < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
         				current = current.leftChild;
         			}
@@ -635,14 +639,10 @@ public class TwoFourTree {
     			    			
     		}
     		
-    		
-    		
     		return true;
     	}//end of while loop
     	
-    	
-    	
-    	return false;
+    	return false; //if we exit while loop and never returned true we were return false meaning value was never in the tree
     }
     
     private void deleteValAndReorder(TwoFourTreeItem node, int delVal) {
@@ -681,12 +681,19 @@ public class TwoFourTree {
     
     private TwoFourTreeItem findClosestInLeftSubtree(TwoFourTreeItem subTreeNode) { //function will be used to determine what the closet number is to the one we are trying to delete so we can swap them. Will return a reference to a TwoFourTreeItem node so we can manipulate it in delete function
     	
+    	
+    	//**IMPLEMENT fixTwoNode In this function so we can fix any twoNodes on the way down to find the closest node to the one we are deleting
+    	
     	TwoFourTreeItem current = subTreeNode;
     	TwoFourTreeItem last = null;
     	
     	while(current != null) { //since we passed in the Nodes proper subtree we want to find the highest value of we just need to keep going right every single time
     		
     		last = current;
+    		
+    		if(current.isTwoNode()) {
+    			fixTwoNode(current);
+    		}
     		
     		current = current.rightChild;
     		
@@ -696,14 +703,39 @@ public class TwoFourTree {
     }
     
 
+    private void fixTwoNode(TwoFourTreeItem twoNode) { //this function will get passed in the current node we are on in our delVal function that is a twoNode that needs strengthening.
+    	
+    	//case 1 borrowing from a sibling if possible
+    	
+    	if(twoNode.parent.isTwoNode()) {
+    		
+    		if(twoNode.parent.leftChild == twoNode && twoNode.parent.rightChild.isThreeNode() || twoNode.parent.rightChild.isFourNode()) { //this means the twoNode we are trying to strengthen is to the left of the parent so we can only borrow from right
+    			
+    			addValueToNode(twoNode.parent, twoNode.parent.rightChild.value1);
+    			addValueToNode(twoNode, twoNode.parent.value1);
+    			
+    			
+    			
+    		}
+    		
+    		
+    		
+    		
+    		
+    	}
+    	
+    	
+    	
+    }
+    
     
     public void printInOrder() {
-//    	if(root != null) root.printInOrder(0);
+    	if(root != null) root.printInOrder(0);
     	
-    	System.out.println("node one is: | " + root.value1 + " | " + root.value2 + " | " + root.value3 + " | ");
-    	System.out.println("right child of root now is: | " + root.rightChild.value1 + " | " + root.rightChild.value2 + " | " + root.rightChild.value3 + " | ");
-
-    	System.out.println("left child of root now is: | " + root.leftChild.value1 + " | " + root.leftChild.value2 + " | " + root.leftChild.value3 + " | ");
+//    	System.out.println("node one is: | " + root.value1 + " | " + root.value2 + " | " + root.value3 + " | ");
+//    	System.out.println("right child of root now is: | " + root.rightChild.value1 + " | " + root.rightChild.value2 + " | " + root.rightChild.value3 + " | ");
+//
+//    	System.out.println("left child of root now is: | " + root.leftChild.value1 + " | " + root.leftChild.value2 + " | " + root.leftChild.value3 + " | ");
 
     	
     	
