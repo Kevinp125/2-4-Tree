@@ -389,6 +389,7 @@ public class TwoFourTree {
     	
     	//handle all the special cases with the root first.
     	
+    	System.out.println("In delete value function");
     	if(root == null) //if we don't have a tree there is nothing to delete so just return false
     		return false; 
    
@@ -409,6 +410,7 @@ public class TwoFourTree {
     	
     	if(root.isTwoNode() && !root.isLeaf) { //if the root is a twoNode and has children we need to either borrow from a sibling or merge root with its children. We do this before entering the loop so everything else goes smoothly.
     		
+    		System.out.println("In root is two node but not leaf");
     		if(root.leftChild.isTwoNode() && root.rightChild.isTwoNode()) { //if root is a twoNode we need to strengthen it. If both children are also twoNodes merge them together to make a four node
     			
     			TwoFourTreeItem newRoot = new TwoFourTreeItem(root.leftChild.value1); //make a new node and put the value in the roots left child in it
@@ -436,8 +438,13 @@ public class TwoFourTree {
     		else if(root.leftChild.values >= root.rightChild.values) { //we want to steal an element from the child that has the greater amount of elements because itll be furthest away from becoming a two node
     			
     			if(root.leftChild.isThreeNode()) { //if the leftChild has two values grab the biggest one
+    				System.out.println("in correct removal procedure");
     				addValueToNode(root, root.leftChild.value2); //add the greater value to the root
     				deleteValAndReorder(root.leftChild, root.leftChild.value2); //make sure to delete that value from the node we are taking it from
+    				System.out.println("root right now is: " + root.value1 +" | " +root.value2);
+    				System.out.println("leftchild is: "+ root.leftChild.value1 + " | Right child: "+ root.rightChild.value1);
+    				System.out.println("center child is "+ root.centerChild);
+    				System.out.println("values in node: " + root.values);
     			}
     			
     			else if(root.leftChild.isFourNode()) { //if leftChild has four values grab biggest one which is value 3
@@ -451,6 +458,7 @@ public class TwoFourTree {
     			addValueToNode(root, root.rightChild.value1); //Don't need if statements here because there will always be the smallest value in the value1 place
     			deleteValAndReorder(root.rightChild, root.rightChild.value1);
     		}
+    	
     		
     	} //end of case dealing with root being a two node and strengthening it by merging with children or borrowing from children.
     	
@@ -461,12 +469,21 @@ public class TwoFourTree {
     	
     	while(current != null) {
     		
+    		System.out.println("In loop");
+    		
     		if(current.isTwoNode()) {
+				System.out.println("went into twoNode function");
+				boolean mergePerformed = fixTwoNode(current);
 				
+				if(mergePerformed) { //fixTwoNode returns a boolean on whether or not a merge was performed. If there was it is best to move current back one to its parent before we continue deletion process because tree / node structure was changed
+					current = current.parent;
+				}
 				
 			}
     		
     		else if(current.value1 == value || current.value2 == value || current.value3 == value) { //we found value we want to delete
+    			
+    			System.out.println("In value to delete");
     			
     			if(current.isLeaf) { //if the value we want to delete is in a leaf all we have to do is delete it
     				deleteValAndReorder(current, value);
@@ -477,7 +494,7 @@ public class TwoFourTree {
     				
     				if(current.isThreeNode() && current.value2 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerChild);
+    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerChild, value);
     					
     					if(maxNodeInLeft.isTwoNode()) {
     						
@@ -502,7 +519,7 @@ public class TwoFourTree {
     				
     				else if(current.isThreeNode() && current.value1 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.leftChild);
+    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.leftChild, value);
     					
     					if(maxNodeInLeft.isTwoNode()) {
     						
@@ -527,7 +544,7 @@ public class TwoFourTree {
     				
     				else if(current.isFourNode() && current.value1 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.leftChild);
+    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.leftChild, value);
     					
     					if(maxNodeInLeft.isTwoNode()) {
     						
@@ -552,7 +569,7 @@ public class TwoFourTree {
     				
     				else if(current.isFourNode() && current.value2 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerLeftChild);
+    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerLeftChild, value);
     					
     					if(maxNodeInLeft.isTwoNode()) {
     						
@@ -577,7 +594,7 @@ public class TwoFourTree {
     				
     				else if(current.isFourNode() && current.value3 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerRightChild);
+    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerRightChild, value);
     					
     					if(maxNodeInLeft.isTwoNode()) {
     						
@@ -608,7 +625,8 @@ public class TwoFourTree {
     		
     		
     		else { //else means node we are on does not have the value we want to delete so we keep traversing
-    			   			
+    			
+    			System.out.println("In traversal logic");
     			//once thats fixed
     			if(current.isThreeNode()) {
     				if(value < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
@@ -616,6 +634,7 @@ public class TwoFourTree {
         			}
         			else if(value > current.value2){ //if value we want to insert is greater than the 3 nodes greatest value move to right
         				current = current.rightChild;
+        				System.out.println("went down rightChild");
         			}
         			else { //else means the value is in between the 3 nodes two values so traverse down the center child.
         				current = current.centerChild;
@@ -639,7 +658,7 @@ public class TwoFourTree {
     			    			
     		}
     		
-    		return true;
+    		
     	}//end of while loop
     	
     	return false; //if we exit while loop and never returned true we were return false meaning value was never in the tree
@@ -679,10 +698,8 @@ public class TwoFourTree {
     }
 
     
-    private TwoFourTreeItem findClosestInLeftSubtree(TwoFourTreeItem subTreeNode) { //function will be used to determine what the closet number is to the one we are trying to delete so we can swap them. Will return a reference to a TwoFourTreeItem node so we can manipulate it in delete function
+    private TwoFourTreeItem findClosestInLeftSubtree(TwoFourTreeItem subTreeNode, int delVal) { //function will be used to determine what the closet number is to the one we are trying to delete so we can swap them. Will return a reference to a TwoFourTreeItem node so we can manipulate it in delete function
     	
-    	
-    	//**IMPLEMENT fixTwoNode In this function so we can fix any twoNodes on the way down to find the closest node to the one we are deleting
     	
     	TwoFourTreeItem current = subTreeNode;
     	TwoFourTreeItem last = null;
@@ -691,11 +708,39 @@ public class TwoFourTree {
     		
     		last = current;
     		
-    		if(current.isTwoNode()) {
-    			fixTwoNode(current);
+    		if(current.isTwoNode()) {   //**IMPLEMENT fixTwoNode In this function so we can fix any twoNodes on the way down to find the closest node to the one we are deleting
+    			boolean mergePerformed = fixTwoNode(current);
+    			if(mergePerformed) {
+    				current = current.parent;
+    			}
     		}
     		
-    		current = current.rightChild;
+    		else if(current.isThreeNode()) {
+				if(delVal < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
+    				current = current.leftChild;
+    			}
+    			else if(delVal > current.value2){ //if value we want to insert is greater than the 3 nodes greatest value move to right
+    				current = current.rightChild;
+    			}
+    			else { //else means the value is in between the 3 nodes two values so traverse down the center child.
+    				current = current.centerChild;
+    			}
+			}
+			
+			else if(current.isFourNode()) {
+				if(delVal<current.value1) { //if value we are searching for is less than the left most value traverse down four nodes left child
+    				current = current.leftChild;
+    			}
+    			else if(delVal > current.value3) { //if value we are searching for is greater than the fourNodes greatest value traverse down right child
+    				current = current.rightChild;
+    			}
+    			else if(delVal < current.value3 && delVal > current.value2) { //if value is in between right most and middle value of 4 node traverse down center rightchild
+    				current = current.centerRightChild;
+    			}
+    			else { //else only leaves the centerLeftChild
+    				current = current.centerLeftChild;
+    			}
+			}	
     		
     	} //once we exit this loop last should be storing the rightmost leaf of our subtree which will contain whether it be values1, 2, 3 our closest value to value we are trying to delete
     	
@@ -703,20 +748,168 @@ public class TwoFourTree {
     }
     
 
-    private void fixTwoNode(TwoFourTreeItem twoNode) { //this function will get passed in the current node we are on in our delVal function that is a twoNode that needs strengthening.
+    private boolean fixTwoNode(TwoFourTreeItem node) { //this function will get passed in the current node we are on in our delVal function that is a twoNode that needs strengthening.
     	
-    	//case 1 borrowing from a sibling if possible
+    	boolean mergePerformed = false;
     	
-    	if(twoNode.parent.isTwoNode()) {
+    	//if parent has two Values
+    	
+    	if(node.parent.isThreeNode()) {
     		
-    		if(twoNode.parent.leftChild == twoNode && twoNode.parent.rightChild.isThreeNode() || twoNode.parent.rightChild.isFourNode()) { //this means the twoNode we are trying to strengthen is to the left of the parent so we can only borrow from right
+    		if(node.parent.leftChild == node) {
     			
-    			addValueToNode(twoNode.parent, twoNode.parent.rightChild.value1);
-    			addValueToNode(twoNode, twoNode.parent.value1);
+    			if(node.parent.centerChild.isTwoNode()) {
+    				
+    				TwoFourTreeItem mergeNode = new TwoFourTreeItem(node.value1);
+    				addValueToNode(mergeNode, node.parent.value1);
+    				addValueToNode(mergeNode, node.parent.centerChild.value1);//execute merge code
+    				deleteValAndReorder(node.parent, node.parent.value1);
+    				mergeNode.parent = node.parent;	
+    				
+    				if(!node.isLeaf) { //we have to also check if the node we are merging if it has children if it does we need to reassign all these children to mergeNode
+    					mergeNode.leftChild = node.leftChild;
+    					mergeNode.centerLeftChild = node.rightChild;
+    					mergeNode.centerRightChild = node.parent.centerChild.leftChild;
+    					mergeNode.rightChild = node.parent.centerChild.rightChild;
+    					mergeNode.leftChild.parent = mergeNode;
+    					mergeNode.centerLeftChild.parent = mergeNode;
+    					mergeNode.centerRightChild.parent = mergeNode;
+    					mergeNode.rightChild.parent = mergeNode;
+    					mergeNode.isLeaf = false; //mergeNode is no longer a leaf
+    				}//end of if checking isLead
+    				
+    				node.parent.leftChild = mergeNode;
+    				node.parent.centerChild = null;
+    				mergePerformed = true;
+    				
+    			}//end of if statement that detects if to merge
     			
     			
+    			else {
+    				addValueToNode(node, node.parent.value1);
+        			deleteValAndReorder(node.parent,node.parent.value1);
+        			addValueToNode(node.parent, node.parent.centerChild.value1);
+    			} //end of else that borrows from center child
     			
-    		}
+    		}//end of if statement that borrows / merges with siblings if you are all the way on the left
+    		
+    		//if twoNode we are strengthening is in the middle it can borrow from left or right sibling or just merge with one of the two
+    		else if(node.parent.centerChild == node) {
+    			
+    			if(node.parent.leftChild.isTwoNode() && node.parent.rightChild.isTwoNode()) { //this means the node we are trying to fix cannot borrow but rather has to merge
+        		
+        			TwoFourTreeItem mergeNode = new TwoFourTreeItem(node.value1);
+        			addValueToNode(mergeNode, node.parent.value1);
+        			addValueToNode(mergeNode, node.parent.leftChild.value1);//execute merge code
+        			deleteValAndReorder(node.parent, node.parent.value1);
+        			mergeNode.parent = node.parent;	
+        				
+        			if(!node.isLeaf) { //we have to also check if the node we are merging if it has children if it does we need to reassign all these children to mergeNode
+        				mergeNode.leftChild = node.parent.leftChild.leftChild;
+        				mergeNode.centerLeftChild = node.parent.leftChild.rightChild;
+        				mergeNode.centerRightChild = node.leftChild;
+       					mergeNode.rightChild = node.rightChild;
+       					mergeNode.leftChild.parent = mergeNode;
+       					mergeNode.centerLeftChild.parent = mergeNode;
+       					mergeNode.centerRightChild.parent = mergeNode;
+       					mergeNode.rightChild.parent = mergeNode;
+       					mergeNode.isLeaf = false; //mergeNode is no longer a leaf
+       				}
+       				
+        			node.parent.leftChild = mergeNode;
+        			node.parent.centerChild = null;
+        			mergePerformed = true;
+        				
+        		}//end of if statement that merges node we are on if sibling had nothing to borrow 
+    			
+    			else { //else means the twoNode we are fixing has siblings that are three Nodes or FourNodes so borrow from them
+    				
+    				if(node.parent.leftChild.values >= node.parent.rightChild.values) { //grab whichever of the two siblings has the greater amount of values to borrow from to preserve the 2-4tree structure even better
+        				
+        				if(node.parent.leftChild.isThreeNode()) { //if that greater sibling in this case the leftChild is a threeNode we grab the farthest value of a threeNode (value2)
+        					addValueToNode(node, node.parent.value1);
+        					deleteValAndReorder(node.parent, node.parent.value1);
+        					addValueToNode(node.parent, node.parent.leftChild.value2);				
+        					
+        				}
+        				else if(node.parent.leftChild.isFourNode()) { //if that greater sibling is a fourNode than we grab the farthest value of a fourNode which is (value3)
+        					addValueToNode(node, node.parent.value1);
+        					deleteValAndReorder(node.parent, node.parent.value1);
+        					addValueToNode(node.parent, node.parent.leftChild.value3);	
+        				}
+        				
+        			}//end of if statement determining which sibling had greater values
+    				
+    				else { //else means values in the right sibling are greater than the ones in the left sibling so borrow from them
+    					
+    					//Don't need more if statements here because if sibling is on the right we just grab the smallest value which if it is a three Node or fourNode it will always be value1
+        				addValueToNode(node, node.parent.value2);
+        				deleteValAndReorder(node.parent, node.parent.value2);
+        				addValueToNode(node.parent, node.parent.rightChild.value1);				
+    				} 
+        			
+        		}
+    		
+    		}//end of else if checking if node we are working with is centerChild
+    		
+    		else if(node.parent.rightChild == node) {
+    			
+    			if(node.parent.centerChild.isTwoNode()) {
+    				
+    				TwoFourTreeItem mergeNode = new TwoFourTreeItem(node.value1);
+    				addValueToNode(mergeNode, node.parent.value2);
+    				addValueToNode(mergeNode, node.parent.centerChild.value1);//execute merge code
+    				deleteValAndReorder(node.parent, node.parent.value2);
+    				mergeNode.parent = node.parent;	
+    				
+    				if(!node.isLeaf) { //we have to also check if the node we are merging if it has children if it does we need to reassign all these children to mergeNode
+    					mergeNode.leftChild = node.parent.centerChild.leftChild;
+    					mergeNode.centerLeftChild = node.parent.centerChild.rightChild;
+    					mergeNode.centerRightChild = node.leftChild;
+    					mergeNode.rightChild = node.rightChild;
+    					mergeNode.leftChild.parent = mergeNode;
+    					mergeNode.centerLeftChild.parent = mergeNode;
+    					mergeNode.centerRightChild.parent = mergeNode;
+    					mergeNode.rightChild.parent = mergeNode;
+    					mergeNode.isLeaf = false; //mergeNode is no longer a leaf
+    				}//end of if checking isLead
+    				
+    				node.parent.rightChild = mergeNode;
+    				node.parent.centerChild = null;
+    				mergePerformed = true;
+    				
+    			}//end of if statement that detects if to merge
+    			
+    			else { //else means we can borrow as a node all the way on the right from our left sibling in the middle
+    				
+    				if(node.parent.centerChild.isThreeNode()) {
+    					addValueToNode(node, node.parent.value2);
+            			deleteValAndReorder(node.parent,node.parent.value2);
+            			addValueToNode(node.parent, node.parent.centerChild.value2);			
+    				}
+    				else if(node.parent.centerChild.isFourNode()) {
+    					addValueToNode(node, node.parent.value2);
+            			deleteValAndReorder(node.parent,node.parent.value2);
+            			addValueToNode(node.parent, node.parent.centerChild.value3);
+    				}
+    		
+    			}
+    			
+    			
+    		}//end of else if that encases the logic for a twoNode who is on the right side of its parent
+    	
+	
+    	} //end of case where we are working with the node we are strengthening and its parent is a threeNode 
+    	
+    	
+    	//now we have to also deal with fixing a two node when its parent is a fourNode
+    	else if(node.parent.isFourNode()) {
+    		
+    		
+    		
+    		
+    		
+    		
     		
     		
     		
@@ -724,21 +917,14 @@ public class TwoFourTree {
     		
     	}
     	
-    	
-    	
-    }
+    	return mergePerformed;
+    		
+    } //end of fixTwoNode Function
+ 
     
     
     public void printInOrder() {
     	if(root != null) root.printInOrder(0);
-    	
-//    	System.out.println("node one is: | " + root.value1 + " | " + root.value2 + " | " + root.value3 + " | ");
-//    	System.out.println("right child of root now is: | " + root.rightChild.value1 + " | " + root.rightChild.value2 + " | " + root.rightChild.value3 + " | ");
-//
-//    	System.out.println("left child of root now is: | " + root.leftChild.value1 + " | " + root.leftChild.value2 + " | " + root.leftChild.value3 + " | ");
-
-    	
-    	
     }
 
     public TwoFourTree() { //constructor for the TwoFourTree class this gets called in App.Java. Initialize the root of our tree here

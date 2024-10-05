@@ -10,11 +10,12 @@ public class tester {
 		twFourTree.addValue(5);
 		twFourTree.addValue(4);
 		twFourTree.addValue(3);
-		twFourTree.addValue(1);
-		twFourTree.addValue(6);
+//		twFourTree.addValue(1);
+//		twFourTree.addValue(7);
 //		twFourTree.addValue(8);
 	
 		twFourTree.deleteValue(5);
+		System.out.println("Back in main");
 		twFourTree.printInOrder();
 //		twFourTree.deleteValue(2);
 //		twFourTree.printInOrder();
