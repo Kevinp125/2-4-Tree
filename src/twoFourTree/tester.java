@@ -15,8 +15,9 @@ public class tester {
 //		twFourTree.addValue(8);
 	
 		twFourTree.deleteValue(5);
-		System.out.println("Back in main");
-		twFourTree.printInOrder();
+		
+		
+//		twFourTree.printInOrder();
 //		twFourTree.deleteValue(2);
 //		twFourTree.printInOrder();
 //		twFourTree.deleteValue(3);

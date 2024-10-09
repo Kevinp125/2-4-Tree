@@ -389,28 +389,84 @@ public class TwoFourTree {
     	
     	//handle all the special cases with the root first.
     	
-    	System.out.println("In delete value function");
     	if(root == null) //if we don't have a tree there is nothing to delete so just return false
     		return false; 
    
     	
-    	if(root.value1 == value || root.value2 == value || root.value3 == value) { //When the value we want to delete is in the root
+    	else if(root.value1 == value || root.value2 == value || root.value3 == value) { //When the value we want to delete is in the root
     		
+    		System.out.println("In root case");
     		if(root.isTwoNode() && root.isLeaf) { //if the root only has a single value and no children than we know that this is the last item to delete in the tree. Make tree null.
     			root = null;
     			return true;
     		}
     		
-    		if(root.isThreeNode() || root.isFourNode() && root.isLeaf) { //if the root has more than 1 value and it is a leaf we can just remove value from there 
+    		else if(root.isThreeNode() || root.isFourNode() && root.isLeaf) { //if the root has more than 1 value and it is a leaf we can just remove value from there 
     			deleteValAndReorder(root, value); 
     			return true;
     		}
     	
+    		
+    		else if(root.isTwoNode() && !root.isLeaf) { //if the root is a twoNode and has children we need to either borrow from a sibling or merge root with its children before deleting the value
+    			
+	    		if(root.leftChild.isTwoNode() && root.rightChild.isTwoNode()) { //if root is a twoNode we need to strengthen it. If both children are also twoNodes merge them together to make a four node
+	    			
+	    			TwoFourTreeItem newRoot = new TwoFourTreeItem(root.leftChild.value1); //make a new node and put the value in the roots left child in it
+	    			addValueToNode(newRoot, root.value1); //then add to that same node the value in the root
+	    			addValueToNode(newRoot, root.rightChild.value1); //and the value in the roots right child
+	    			
+	    			//then assign all the children of the past twoNodes to what is essentially going to be our new root
+	    			newRoot.leftChild = root.leftChild.leftChild; 
+	    			newRoot.centerLeftChild = root.leftChild.rightChild;
+	    			newRoot.centerRightChild = root.rightChild.leftChild;
+	    			newRoot.rightChild = root.rightChild.rightChild;
+	    			
+	    			if(!root.leftChild.isLeaf) { //if the left child of the old root wasnt a leaf it means it has children we need to reparent these children to point to the new root
+	    				newRoot.leftChild.parent = newRoot;
+	    				newRoot.centerLeftChild.parent = newRoot;
+	    				newRoot.centerRightChild.parent = newRoot;
+	    				newRoot.rightChild.parent = newRoot;
+	    				newRoot.isLeaf = true;
+	    			}
+	    			
+	    			root = newRoot; //finally make the root point to our newly merged root.
+	    			
+	    			deleteValAndReorder(newRoot, value);
+	    			return true;
+	    		}
+	    		
+	
+	    		else if(root.leftChild.values >= root.rightChild.values) { //we want to steal an element from the child that has the greater amount of elements because itll be furthest away from becoming a two node
+	    			
+	    			if(root.leftChild.isThreeNode()) { //if the leftChild has two values grab the biggest one
+	    				addValueToNode(root, root.leftChild.value2); //add the greater value to the root
+	    				deleteValAndReorder(root.leftChild, root.leftChild.value2); //make sure to delete that value from the node we are taking it from
+	    				deleteValAndReorder(root, value);
+	    				return true;
+	    			}
+	    			
+	    			else if(root.leftChild.isFourNode()) { //if leftChild has four values grab biggest one which is value 3
+	    				addValueToNode(root, root.leftChild.value3);
+	    				deleteValAndReorder(root.leftChild, root.leftChild.value3);
+	    				deleteValAndReorder(root, value);
+	    				return true;
+	    			}
+	    			
+	    		}
+	    		
+	    		else { //else means that the roots right child has more values to steal from so we want to grab the smallest value from the right child and place it in the root
+	    			addValueToNode(root, root.rightChild.value1); //Don't need if statements here because there will always be the smallest value in the value1 place
+	    			deleteValAndReorder(root.rightChild, root.rightChild.value1);
+	    			deleteValAndReorder(root, value);
+	    			return true;
+	    		}
+	    	
+	    		
+	    	} 
     	}
     	
-    	if(root.isTwoNode() && !root.isLeaf) { //if the root is a twoNode and has children we need to either borrow from a sibling or merge root with its children. We do this before entering the loop so everything else goes smoothly.
-    		
-    		System.out.println("In root is two node but not leaf");
+    	else if(root.isTwoNode() && !root.isLeaf) { //now check anyways even if there isnt a value to delete in the root if we need to merge root since its children are weak so we dont have problems later
+    	
     		if(root.leftChild.isTwoNode() && root.rightChild.isTwoNode()) { //if root is a twoNode we need to strengthen it. If both children are also twoNodes merge them together to make a four node
     			
     			TwoFourTreeItem newRoot = new TwoFourTreeItem(root.leftChild.value1); //make a new node and put the value in the roots left child in it
@@ -433,34 +489,7 @@ public class TwoFourTree {
     			
     			root = newRoot; //finally make the root point to our newly merged root.
     		}
-    		
-
-    		else if(root.leftChild.values >= root.rightChild.values) { //we want to steal an element from the child that has the greater amount of elements because itll be furthest away from becoming a two node
-    			
-    			if(root.leftChild.isThreeNode()) { //if the leftChild has two values grab the biggest one
-    				System.out.println("in correct removal procedure");
-    				addValueToNode(root, root.leftChild.value2); //add the greater value to the root
-    				deleteValAndReorder(root.leftChild, root.leftChild.value2); //make sure to delete that value from the node we are taking it from
-    				System.out.println("root right now is: " + root.value1 +" | " +root.value2);
-    				System.out.println("leftchild is: "+ root.leftChild.value1 + " | Right child: "+ root.rightChild.value1);
-    				System.out.println("center child is "+ root.centerChild);
-    				System.out.println("values in node: " + root.values);
-    			}
-    			
-    			else if(root.leftChild.isFourNode()) { //if leftChild has four values grab biggest one which is value 3
-    				addValueToNode(root, root.leftChild.value3);
-    				deleteValAndReorder(root.leftChild, root.leftChild.value3);
-    			}
-    			
-    		}
-    		
-    		else { //else means that the roots right child has more values to steal from so we want to grab the smallest value from the right child and place it in the root
-    			addValueToNode(root, root.rightChild.value1); //Don't need if statements here because there will always be the smallest value in the value1 place
-    			deleteValAndReorder(root.rightChild, root.rightChild.value1);
-    		}
-    	
-    		
-    	} //end of case dealing with root being a two node and strengthening it by merging with children or borrowing from children.
+    	}
     	
     	
     	//Now that we handled special cases above we can begin our loop logic below and fixing twoNodes as we go down.
@@ -469,23 +498,29 @@ public class TwoFourTree {
     	
     	while(current != null) {
     		
-    		System.out.println("In loop");
-    		
-    		if(current.isTwoNode()) {
-				System.out.println("went into twoNode function");
-				boolean mergePerformed = fixTwoNode(current);
-				
-				if(mergePerformed) { //fixTwoNode returns a boolean on whether or not a merge was performed. If there was it is best to move current back one to its parent before we continue deletion process because tree / node structure was changed
-					current = current.parent;
-				}
-				
-			}
-    		
-    		else if(current.value1 == value || current.value2 == value || current.value3 == value) { //we found value we want to delete
+    		if(current.parent != null) {
     			
-    			System.out.println("In value to delete");
+		    	if(current.isTwoNode()) {
+		    		
+		    		System.out.println("In isTwoNode");
+					boolean mergePerformed = fixTwoNode(current);
+						
+					if(mergePerformed) { //fixTwoNode returns a boolean on whether or not a merge was performed. If there was it is best to move current back one to its parent before we continue deletion process because tree / node structure was changed
+						current = current.parent;	
+						System.out.println("entered merge");
+					}
+		    	}
+	    	
+    		}
+	    		
+    		
+    		
+    		if(current.value1 == value || current.value2 == value || current.value3 == value) { //we found value we want to delete
+    			
+    			System.out.println("In node where value to delete is");
     			
     			if(current.isLeaf) { //if the value we want to delete is in a leaf all we have to do is delete it
+    				System.out.println("In leaf part to delete");
     				deleteValAndReorder(current, value);
     				return true; //value was deleted exit
     			}
@@ -618,7 +653,7 @@ public class TwoFourTree {
     				}
     					
     					
-    			} //end of if bracket that identifies node we are in to delete something isnt a leadf
+    			} //end of if bracket that identifies node we are in to delete something isnt a leaf
     			
     			
     		}//end of if brackets that identify if the node we are on has value we wish to delete
@@ -626,15 +661,22 @@ public class TwoFourTree {
     		
     		else { //else means node we are on does not have the value we want to delete so we keep traversing
     			
-    			System.out.println("In traversal logic");
-    			//once thats fixed
-    			if(current.isThreeNode()) {
+    			
+    			if(current.isTwoNode()) {
+    				if(value < current.value1) {
+    					current = current.leftChild;
+    				}
+    				else {
+    					current = current.rightChild;
+    				} 				
+    			}
+    			
+    			else if(current.isThreeNode()) {
     				if(value < current.value1) { //if value we want to insert is less than the 3 nodes smallest value move to left
         				current = current.leftChild;
         			}
         			else if(value > current.value2){ //if value we want to insert is greater than the 3 nodes greatest value move to right
         				current = current.rightChild;
-        				System.out.println("went down rightChild");
         			}
         			else { //else means the value is in between the 3 nodes two values so traverse down the center child.
         				current = current.centerChild;
@@ -752,9 +794,42 @@ public class TwoFourTree {
     	
     	boolean mergePerformed = false;
     	
+    	System.out.println("inside fix two Node");
+   
+    	if(node.parent.isTwoNode()) {
+    		
+    		System.out.println("in if statement where parent is a twoNode");
+    		
+    		if(node.parent.rightChild == node) {
+    			
+    			System.out.println("In node is in right");
+    			
+    			if(node.parent.leftChild.isThreeNode()) {
+    				addValueToNode(node.parent, node.parent.leftChild.value2);
+    				System.out.println("Value in root before deletion = " +root.value1);
+        			addValueToNode(node, node.parent.value1);
+        			deleteValAndReorder(node.parent.leftChild, node.parent.leftChild.value2);
+        			
+        			System.out.println("Tree is now root "+ root.value1 + " | left child | "+ root.leftChild.value1 + " | right child | "+root.rightChild.value1);
+    			}
+    			else if(node.parent.leftChild.isFourNode()) {
+    				addValueToNode(node.parent, node.parent.leftChild.value3);
+        			addValueToNode(node, node.parent.value1);
+        			deleteValAndReorder(node.parent.leftChild, node.parent.leftChild.value3);
+    			}
+    		}
+    		
+    		else {
+    			
+    			addValueToNode(node.parent, node.parent.rightChild.value1);
+        		addValueToNode(node, node.parent.value1);
+        		deleteValAndReorder(node.parent.rightChild, node.parent.rightChild.value1);	
+    		}
+  
+    	}
     	//if parent has two Values
     	
-    	if(node.parent.isThreeNode()) {
+    	else if(node.parent.isThreeNode()) {
     		
     		if(node.parent.leftChild == node) {
     			
