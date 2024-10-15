@@ -3,50 +3,61 @@ package twoFourTree;
 public class tester {
 
 	public static void main(String[] args) {
-		TwoFourTree twFourTree = new TwoFourTree();
-
 		
-		twFourTree.addValue(2);
-		twFourTree.addValue(5);
-		twFourTree.addValue(4);
-		twFourTree.addValue(3);
-		twFourTree.addValue(1);
-		twFourTree.addValue(7);
-		twFourTree.addValue(8);
-		twFourTree.printInOrder();
-		twFourTree.deleteValue(4);
-		twFourTree.printInOrder();
-		twFourTree.deleteValue(2);
-		twFourTree.printInOrder();
-		twFourTree.deleteValue(1);
-		twFourTree.printInOrder();
+		TwoFourTree tft = new TwoFourTree();
+		int[] primeArray = new int[25];  // Array to hold the first 30 prime numbers
+        int count = 0;  // Counter to keep track of how many primes have been found
+        int num = 2;  // Start checking from 2 (the first prime number)
 
-//		twFourTree.deleteValue(2);
-//		twFourTree.printInOrder();
-//		twFourTree.deleteValue(3);
-//		twFourTree.printInOrder();
-//		twFourTree.addValue(7); 
-//		twFourTree.addValue(11);
-//		twFourTree.addValue(13);
-//		twFourTree.addValue(17);
-//		twFourTree.addValue(19);
-//		twFourTree.addValue(23);
-//		twFourTree.addValue(29);
-//		twFourTree.addValue(31);
-//		twFourTree.addValue(37);
-//		twFourTree.addValue(41);
-//		twFourTree.addValue(43);
-//		twFourTree.addValue(47);
-//		twFourTree.addValue(53);
-//		twFourTree.addValue(59);
-//		twFourTree.addValue(61);
-//		twFourTree.addValue(67);
-//		twFourTree.addValue(71);
-//		twFourTree.addValue(73);
-//		twFourTree.addValue(79);
-//		twFourTree.addValue(83);
-//		twFourTree.addValue(89);
-//		twFourTree.addValue(97);
+
+	    while (count < 25) {
+            if (isPrime(num)) {
+                primeArray[count] = num;  // If it's prime, add it to the array
+                count++;  // Increment the prime counter
+            }
+            num++;  // Move to the next number to check
+        }
+		
+	    for (int i = 0; i < primeArray.length; i++) {
+            System.out.print(primeArray[i] + " ");
+        }
+	    int iterCounter = 1;
+	    System.out.println();
+	   for(int i = 0; i<25;i++) {
+		   System.out.println("Insertion #" + iterCounter);
+		   tft.addValue(primeArray[i]);
+		   tft.printInOrder();
+		   System.out.println("----------------------------------------");
+		   iterCounter++;
+	   }
+	}
+	
+	
+	
+	
+	public static boolean isPrime(int number) {
+	    if (number <= 1) {
+	        return false;
+	    }
+	    for (int i = 2; i <= Math.sqrt(number); i++) {
+	        if (number % i == 0) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
+}
+
+
+//        System.out.println("Static test: first few prime numbers:");
+//        tft.printInOrder();
+//        tft.deleteValue(37);
+//        System.out.println("after deleting 37");
+//        tft.printInOrder();
+//        tft.deleteValue(73);
+//        System.out.println("after deleting 73");
+//        tft.printInOrder();
+
 
 		
 		
@@ -56,7 +67,7 @@ public class tester {
 //		else {
 //			System.out.println("Value not found :(");
 //		}
-	}
 
-}
+
+
  

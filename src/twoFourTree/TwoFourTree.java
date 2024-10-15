@@ -868,6 +868,7 @@ public class TwoFourTree {
     				addValueToNode(node, node.parent.value1);
         			deleteValAndReorder(node.parent,node.parent.value1);
         			addValueToNode(node.parent, node.parent.centerChild.value1);
+        			deleteValAndReorder(node.parent.centerChild,node.parent.centerChild.value1);
     			} //end of else that borrows from center child
     			
     		}//end of if statement that borrows / merges with siblings if you are all the way on the left
@@ -909,12 +910,13 @@ public class TwoFourTree {
         					addValueToNode(node, node.parent.value1);
         					deleteValAndReorder(node.parent, node.parent.value1);
         					addValueToNode(node.parent, node.parent.leftChild.value2);				
-        					
+        					deleteValAndReorder(node.parent.leftChild, node.parent.leftChild.value2);
         				}
         				else if(node.parent.leftChild.isFourNode()) { //if that greater sibling is a fourNode than we grab the farthest value of a fourNode which is (value3)
         					addValueToNode(node, node.parent.value1);
         					deleteValAndReorder(node.parent, node.parent.value1);
         					addValueToNode(node.parent, node.parent.leftChild.value3);	
+        					deleteValAndReorder(node.parent.leftChild, node.parent.leftChild.value3);
         				}
         				
         			}//end of if statement determining which sibling had greater values
@@ -924,7 +926,8 @@ public class TwoFourTree {
     					//Don't need more if statements here because if sibling is on the right we just grab the smallest value which if it is a three Node or fourNode it will always be value1
         				addValueToNode(node, node.parent.value2);
         				deleteValAndReorder(node.parent, node.parent.value2);
-        				addValueToNode(node.parent, node.parent.rightChild.value1);				
+        				addValueToNode(node.parent, node.parent.rightChild.value1);			
+        				deleteValAndReorder(node.parent.rightChild, node.parent.rightChild.value1);
     				} 
         			
         		}
@@ -964,12 +967,15 @@ public class TwoFourTree {
     				if(node.parent.centerChild.isThreeNode()) {
     					addValueToNode(node, node.parent.value2);
             			deleteValAndReorder(node.parent,node.parent.value2);
-            			addValueToNode(node.parent, node.parent.centerChild.value2);			
+            			addValueToNode(node.parent, node.parent.centerChild.value2);
+            			deleteValAndReorder(node.parent.centerChild, node.parent.centerChild.value2);
+            			
     				}
     				else if(node.parent.centerChild.isFourNode()) {
     					addValueToNode(node, node.parent.value2);
             			deleteValAndReorder(node.parent,node.parent.value2);
             			addValueToNode(node.parent, node.parent.centerChild.value3);
+            			deleteValAndReorder(node.parent.centerChild, node.parent.centerChild.value3);
     				}
     		
     			}
@@ -997,8 +1003,8 @@ public class TwoFourTree {
     				if(!node.isLeaf) { //we have to also check if the node we are merging if it has children if it does we need to reassign all these children to mergeNode
     					mergeNode.leftChild = node.leftChild;
     					mergeNode.centerLeftChild = node.rightChild;
-    					mergeNode.centerRightChild = node.parent.centerChild.leftChild;
-    					mergeNode.rightChild = node.parent.centerChild.rightChild;
+    					mergeNode.centerRightChild = node.parent.centerLeftChild.leftChild;
+    					mergeNode.rightChild = node.parent.centerLeftChild.rightChild;
     					mergeNode.leftChild.parent = mergeNode;
     					mergeNode.centerLeftChild.parent = mergeNode;
     					mergeNode.centerRightChild.parent = mergeNode;
@@ -1026,46 +1032,186 @@ public class TwoFourTree {
     		
     		else if(node.parent.centerLeftChild == node) {
     			
+    			if(node.parent.leftChild.isTwoNode() && node.parent.centerRightChild.isTwoNode()) {
+    				
+    				TwoFourTreeItem mergeNode = new TwoFourTreeItem(node.value1);
+    				addValueToNode(mergeNode, node.parent.value1);
+    				addValueToNode(mergeNode, node.parent.leftChild.value1);
+    				deleteValAndReorder(node.parent, node.parent.value1);
+    				mergeNode.parent = node.parent;	
+    				
+    				if(!node.isLeaf) { //we have to also check if the node we are merging if it has children if it does we need to reassign all these children to mergeNode
+    					mergeNode.leftChild = node.parent.leftChild.leftChild;
+    					mergeNode.centerLeftChild = node.parent.leftChild.rightChild;
+    					mergeNode.centerRightChild = node.leftChild;
+    					mergeNode.rightChild = node.rightChild;
+    					mergeNode.leftChild.parent = mergeNode;
+    					mergeNode.centerLeftChild.parent = mergeNode;
+    					mergeNode.centerRightChild.parent = mergeNode;
+    					mergeNode.rightChild.parent = mergeNode;
+    					mergeNode.isLeaf = false; //mergeNode is no longer a leaf
+    				}//end of if checking isLead
+    				
+    				node.parent.leftChild = mergeNode;
+    				node.parent.centerLeftChild = null;
+    				node.parent.centerChild = node.parent.centerRightChild;
+    				node.parent.centerRightChild = null;
+    				mergePerformed = true;
+    				
+    			}//end of if statement that detects if to merge
     			
+    			else { //else means the twoNode we are fixing has siblings that are three Nodes or FourNodes so borrow from them
+    				
+    				if(node.parent.leftChild.values >= node.parent.centerRightChild.values) { //grab whichever of the two siblings has the greater amount of values to borrow from to preserve the 2-4tree structure even better
+        				
+        				if(node.parent.leftChild.isThreeNode()) { //if that greater sibling is a threeNode we grab the farthest value of a threeNode (value2)
+        					addValueToNode(node, node.parent.value1);
+        					deleteValAndReorder(node.parent, node.parent.value1);
+        					addValueToNode(node.parent, node.parent.leftChild.value2);				
+        					deleteValAndReorder(node.parent.leftChild, node.parent.leftChild.value2);
+        				}
+        				else if(node.parent.leftChild.isFourNode()) { //if that greater sibling is a fourNode than we grab the farthest value of a fourNode which is (value3)
+        					addValueToNode(node, node.parent.value1);
+        					deleteValAndReorder(node.parent, node.parent.value1);
+        					addValueToNode(node.parent, node.parent.leftChild.value3);	
+        					deleteValAndReorder(node.parent.leftChild, node.parent.leftChild.value3);
+        				}
+        				
+        			}//end of if statement determining which sibling had greater values
+    				
+    				else { //else means values in the right sibling are greater than the ones in the left sibling so borrow from them
+    					
+    					//Don't need more if statements here because if sibling is on the right we just grab the smallest value which if it is a three Node or fourNode it will always be value1
+        				addValueToNode(node, node.parent.value2);
+        				deleteValAndReorder(node.parent, node.parent.value2);
+        				addValueToNode(node.parent, node.parent.centerRightChild.value1);			
+        				deleteValAndReorder(node.parent.centerRightChild, node.parent.centerRightChild.value1);
+    				} 
+        			
+        		}
     			
-    			
-    			
-    			
-    			
-    			
-    		}
+    		} //end of condition checking if the node that needs to get fixed is the centerLeftChild of fourNode
     		
     		else if(node.parent.centerRightChild == node) {
     			
+    			if(node.parent.centerLeftChild.isTwoNode() && node.parent.rightChild.isTwoNode()) {
+    				
+    				TwoFourTreeItem mergeNode = new TwoFourTreeItem(node.value1);
+    				addValueToNode(mergeNode, node.parent.value3);
+    				addValueToNode(mergeNode, node.parent.rightChild.value1);
+    				deleteValAndReorder(node.parent, node.parent.value3);
+    				mergeNode.parent = node.parent;	
+    				
+    				if(!node.isLeaf) { //we have to also check if the node we are merging if it has children if it does we need to reassign all these children to mergeNode
+    					mergeNode.leftChild = node.leftChild;
+    					mergeNode.centerLeftChild = node.rightChild;
+    					mergeNode.centerRightChild = node.parent.rightChild.leftChild;
+    					mergeNode.rightChild = node.parent.rightChild.rightChild;
+    					mergeNode.leftChild.parent = mergeNode;
+    					mergeNode.centerLeftChild.parent = mergeNode;
+    					mergeNode.centerRightChild.parent = mergeNode;
+    					mergeNode.rightChild.parent = mergeNode;
+    					mergeNode.isLeaf = false; //mergeNode is no longer a leaf
+    				}//end of if checking isLead
+    				
+    				node.parent.rightChild = mergeNode;
+    				node.parent.centerRightChild = null;
+    				node.parent.centerChild = node.parent.centerLeftChild;
+    				node.parent.centerLeftChild = null;
+    				mergePerformed = true;
+    				
+    			}//end of if statement that detects if to merge
     			
+    			else { //else means the twoNode we are fixing has siblings that are three Nodes or FourNodes so borrow from them
+    				
+    				if(node.parent.centerLeftChild.values >= node.parent.rightChild.values) { //grab whichever of the two siblings has the greater amount of values to borrow from to preserve the 2-4tree structure even better
+        				
+        				if(node.parent.centerLeftChild.isThreeNode()) { //if that greater sibling is a threeNode we grab the farthest value of a threeNode (value2)
+        					addValueToNode(node, node.parent.value2);
+        					deleteValAndReorder(node.parent, node.parent.value2);
+        					addValueToNode(node.parent, node.parent.centerLeftChild.value2);				
+        					deleteValAndReorder(node.parent.centerLeftChild, node.parent.centerLeftChild.value2);
+        				}
+        				else if(node.parent.centerLeftChild.isFourNode()) { //if that greater sibling is a fourNode than we grab the farthest value of a fourNode which is (value3)
+        					addValueToNode(node, node.parent.value2);
+        					deleteValAndReorder(node.parent, node.parent.value2);
+        					addValueToNode(node.parent, node.parent.centerLeftChild.value3);	
+        					deleteValAndReorder(node.parent.centerLeftChild, node.parent.centerLeftChild.value3);
+        				}
+        				
+        			}//end of if statement determining which sibling had greater values
+    				
+    				else { //else means values in the right sibling are greater than the ones in the left sibling so borrow from them
+    					
+    					//Don't need more if statements here because if sibling is on the right we just grab the smallest value which if it is a three Node or fourNode it will always be value1
+        				addValueToNode(node, node.parent.value3);
+        				deleteValAndReorder(node.parent, node.parent.value3);
+        				addValueToNode(node.parent, node.parent.rightChild.value1);			
+        				deleteValAndReorder(node.parent.rightChild, node.parent.rightChild.value1);
+    				} 
+        			
+        		}    			
     			
-    			
-    			
-    			
-    			
-    			
-    		}
+    		} //end of condition checking if the node that needs to get fixed is the centerRightChild of fourNode
     		
     		else if(node.parent.rightChild == node) {
     			
+    			if(node.parent.centerRightChild.isTwoNode()) {
+    				
+    				TwoFourTreeItem mergeNode = new TwoFourTreeItem(node.value1);
+    				addValueToNode(mergeNode, node.parent.value3);
+    				addValueToNode(mergeNode, node.parent.centerRightChild.value1);//execute merge code
+    				deleteValAndReorder(node.parent, node.parent.value3);
+    				mergeNode.parent = node.parent;	
+    				
+    				if(!node.isLeaf) { //we have to also check if the node we are merging if it has children if it does we need to reassign all these children to mergeNode
+    					mergeNode.leftChild = node.parent.centerRightChild.leftChild;
+    					mergeNode.centerLeftChild = node.parent.centerRightChild.rightChild;
+    					mergeNode.centerRightChild = node.leftChild;
+    					mergeNode.rightChild = node.rightChild;
+    					mergeNode.leftChild.parent = mergeNode;
+    					mergeNode.centerLeftChild.parent = mergeNode;
+    					mergeNode.centerRightChild.parent = mergeNode;
+    					mergeNode.rightChild.parent = mergeNode;
+    					mergeNode.isLeaf = false; //mergeNode is no longer a leaf
+    				}//end of if checking isLead
+    				
+    				node.parent.rightChild = mergeNode;
+    				node.parent.centerRightChild = null;
+    				node.parent.centerChild = node.parent.centerLeftChild;
+    				node.parent.centerLeftChild = null;
+    				mergePerformed = true;
+    				
+    			}//end of if statement that detects if to merge
+    			
+    			else {
+    				
+    				if(node.parent.centerRightChild.isThreeNode()) {
+    					
+    					addValueToNode(node, node.parent.value3);
+        				deleteValAndReorder(node.parent, node.parent.value3);
+        				addValueToNode(node.parent, node.parent.centerRightChild.value2);
+        				deleteValAndReorder(node.parent.centerRightChild, node.parent.centerRightChild.value2);
+    				}
+    				else if(node.parent.centerRightChild.isFourNode()) {
+    					addValueToNode(node, node.parent.value3);
+        				deleteValAndReorder(node.parent, node.parent.value3);
+        				addValueToNode(node.parent, node.parent.centerRightChild.value3);
+        				deleteValAndReorder(node.parent.centerRightChild, node.parent.centerRightChild.value3);
+    	
+    				}
+    				
+    			}//end of else which just means we can borrow from our sibling
     			
     			
-    			
-    			
-    			
-    			
-    			
-    		}
+    		} //end of condition checking if the node that needs to get fixed is the centerRightChild of fourNode
     		
-    		
-    		
-    	}
+    	}//end of ifParent is a fourNode if logic
     	
     	return mergePerformed;
     		
     } //end of fixTwoNode Function
  
-    
     
     public void printInOrder() {
     	if(root != null) root.printInOrder(0);
