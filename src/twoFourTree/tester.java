@@ -10,14 +10,17 @@ public class tester {
 		twFourTree.addValue(5);
 		twFourTree.addValue(4);
 		twFourTree.addValue(3);
-//		twFourTree.addValue(1);
-//		twFourTree.addValue(7);
-//		twFourTree.addValue(8);
-	
-		twFourTree.deleteValue(5);
-		
-		
-//		twFourTree.printInOrder();
+		twFourTree.addValue(1);
+		twFourTree.addValue(7);
+		twFourTree.addValue(8);
+		twFourTree.printInOrder();
+		twFourTree.deleteValue(4);
+		twFourTree.printInOrder();
+		twFourTree.deleteValue(2);
+		twFourTree.printInOrder();
+		twFourTree.deleteValue(1);
+		twFourTree.printInOrder();
+
 //		twFourTree.deleteValue(2);
 //		twFourTree.printInOrder();
 //		twFourTree.deleteValue(3);
