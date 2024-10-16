@@ -17,19 +17,23 @@ public class tester {
             }
             num++;  // Move to the next number to check
         }
-		
-	    for (int i = 0; i < primeArray.length; i++) {
-            System.out.print(primeArray[i] + " ");
-        }
+	
 	    int iterCounter = 1;
 	    System.out.println();
 	   for(int i = 0; i<25;i++) {
-		   System.out.println("Insertion #" + iterCounter);
+		  
 		   tft.addValue(primeArray[i]);
-		   tft.printInOrder();
-		   System.out.println("----------------------------------------");
+		  
 		   iterCounter++;
 	   }
+	   
+	   tft.printInOrder();
+	   tft.deleteValue(37);
+       System.out.println("\nWithout 37:");
+       tft.printInOrder();
+//       tft.deleteValue(73);
+//       System.out.println("\nWithout 73:");
+	   
 	}
 	
 	
@@ -46,6 +50,8 @@ public class tester {
 	    }
 	    return true;
 	}
+	
+	
 }
 
 
