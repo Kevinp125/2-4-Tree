@@ -31,9 +31,10 @@ public class tester {
 	   tft.deleteValue(37);
        System.out.println("\nWithout 37:");
        tft.printInOrder();
-//       tft.deleteValue(73);
-//       System.out.println("\nWithout 73:");
-	   
+       tft.deleteValue(73);
+       System.out.println("\nWithout 73:");
+       tft.printInOrder();
+//	   
 	}
 	
 	

@@ -531,137 +531,116 @@ public class TwoFourTree {
     				return true; //value was deleted exit
     			}
     			
+    			
     			else if(!current.isLeaf) { //this means it is an internal node so find highest number in left subtrtee of node replace it with value we are deleting and delete the other location of that number
+    				
+    				TwoFourTreeItem maxNodeInLeft = null;
     				
     				if(current.isThreeNode() && current.value2 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerChild, value);
+    					maxNodeInLeft = findClosestInLeftSubtree(current.centerChild, value);
     
-    					if(maxNodeInLeft.isTwoNode()) {
-    						
-    						current.value2 = maxNodeInLeft.value1;
-    						maxNodeInLeft.value1 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					else if(maxNodeInLeft.isThreeNode()) {
-    						current.value2 = maxNodeInLeft.value2;
-    						maxNodeInLeft.value2 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					
-    					else{
-    						current.value2 = maxNodeInLeft.value3;
-    						maxNodeInLeft.value3 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					
-    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				}
     				
     				else if(current.isThreeNode() && current.value1 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.leftChild, value);
+    					maxNodeInLeft = findClosestInLeftSubtree(current.leftChild, value);
     					
-    					if(maxNodeInLeft.isTwoNode()) {
-    						
-    						current.value1 = maxNodeInLeft.value1;
-    						maxNodeInLeft.value1 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					else if(maxNodeInLeft.isThreeNode()) {
-    						current.value1 = maxNodeInLeft.value2;
-    						maxNodeInLeft.value2 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					
-    					else{
-    						current.value1 = maxNodeInLeft.value3;
-    						maxNodeInLeft.value3 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					
-    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				} 
     				
     				else if(current.isFourNode() && current.value1 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.leftChild, value);
+    					maxNodeInLeft = findClosestInLeftSubtree(current.leftChild, value);
     					
-    					if(maxNodeInLeft.isTwoNode()) {
-    						
-    						current.value1 = maxNodeInLeft.value1;
-    						maxNodeInLeft.value1 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					else if(maxNodeInLeft.isThreeNode()) {
-    						current.value1 = maxNodeInLeft.value2;
-    						maxNodeInLeft.value2 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					
-    					else{
-    						current.value1 = maxNodeInLeft.value3;
-    						maxNodeInLeft.value3 = 0;
-    						maxNodeInLeft.values--;
-    					}		
-    					
-    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				}
     				
     				else if(current.isFourNode() && current.value2 == value) {
     					
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerLeftChild, value);
+    					maxNodeInLeft = findClosestInLeftSubtree(current.centerLeftChild, value);
     					
-    					if(maxNodeInLeft.isTwoNode()) {
-    						
-    						current.value2 = maxNodeInLeft.value1;
-    						maxNodeInLeft.value1 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					else if(maxNodeInLeft.isThreeNode()) {
-    						current.value2 = maxNodeInLeft.value2;
-    						maxNodeInLeft.value2 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					
-    					else{
-    						current.value2 = maxNodeInLeft.value3;
-    						maxNodeInLeft.value3 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					
-    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
     				}
     				
     				else if(current.isFourNode() && current.value3 == value) {
     					
     					printNode(current);
-    					TwoFourTreeItem maxNodeInLeft = findClosestInLeftSubtree(current.centerRightChild, value);
+    					maxNodeInLeft = findClosestInLeftSubtree(current.centerRightChild, value);
     					printNode(maxNodeInLeft);
-    					
-    					if(maxNodeInLeft.isTwoNode()) {
-    						
-    						current.value3 = maxNodeInLeft.value1;
-    						maxNodeInLeft.value1 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					else if(maxNodeInLeft.isThreeNode()) {
-    						current.value3 = maxNodeInLeft.value2;
-    						maxNodeInLeft.value2 = 0;
-    						maxNodeInLeft.values--;
-    					}
-    					
-    					else{
-    						current.value3 = maxNodeInLeft.value3;
-    						maxNodeInLeft.value3 = 0;
-    						maxNodeInLeft.values--;
-    					}	
-    					
-    					return true; //value was replaced with closest in subtree and we deleted value in subtree so return true
+    					printNode(current);
     				}
     					
+        			if(current.value1 == value || current.value2 == value || current.value3 == value) {
+        				
+        				if(current.isThreeNode() && current.value1 == value) {
+        					if(maxNodeInLeft.isThreeNode()) {
+        						current.value1 = maxNodeInLeft.value2;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value2);
+        						
+        					}
+        					if(maxNodeInLeft.isFourNode()) {
+        						current.value1 = maxNodeInLeft.value3;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value3);
+        						
+        					}
+        				}
+        				
+        				else if(current.isThreeNode() && current.value2 == value) {
+        					if(maxNodeInLeft.isThreeNode()) {
+        						current.value2 = maxNodeInLeft.value2;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value2);
+        						
+        					}
+        					if(maxNodeInLeft.isFourNode()) {
+        						current.value2 = maxNodeInLeft.value3;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value3);
+        					}
+        					
+        				}
+        				
+        				else if(current.isFourNode() && current.value1 == value) {
+        					if(maxNodeInLeft.isThreeNode()) {
+        						current.value1 = maxNodeInLeft.value2;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value2);
+        						
+        					}
+        					if(maxNodeInLeft.isFourNode()) {
+        						current.value1 = maxNodeInLeft.value3;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value3);
+        					}
+        					
+        				}
+        				
+        				else if(current.isFourNode() && current.value2 == value) {
+        					if(maxNodeInLeft.isThreeNode()) {
+        						current.value2 = maxNodeInLeft.value2;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value2);
+        						
+        					}
+        					if(maxNodeInLeft.isFourNode()) {
+        						current.value2 = maxNodeInLeft.value3;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value3);
+        					}
+        					
+        				}
+        				
+        				
+        				else if(current.isFourNode() && current.value3 == value) {
+        					if(maxNodeInLeft.isThreeNode()) {
+        						current.value3 = maxNodeInLeft.value2;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value2);
+        						
+        					}
+        					if(maxNodeInLeft.isFourNode()) {
+        						current.value3 = maxNodeInLeft.value3;
+        						deleteValAndReorder(maxNodeInLeft,  maxNodeInLeft.value3);
+        					}
+        					
+        				}
+   
+        			}
     					
     			} //end of if bracket that identifies node we are in to delete something isnt a leaf
+    			
+   
     			
     			
     		}//end of if brackets that identify if the node we are on has value we wish to delete
@@ -787,7 +766,7 @@ public class TwoFourTree {
 			}
 			
 			else if(current.isFourNode()) {
-				if(delVal<current.value1) { //if value we are searching for is less than the left most value traverse down four nodes left child
+				if(delVal<= current.value1) { //if value we are searching for is less than the left most value traverse down four nodes left child
     				current = current.leftChild;
     			}
     			else if(delVal > current.value3) { //if value we are searching for is greater than the fourNodes greatest value traverse down right child
@@ -829,9 +808,14 @@ public class TwoFourTree {
     				addValueToNode(node.parent, node.parent.leftChild.value2);
     				System.out.println("Value in root before deletion = " +root.value1);
         			addValueToNode(node, node.parent.value2);
+        			node.centerChild = node.leftChild;
+        			node.leftChild = node.parent.leftChild.rightChild;
+        			node.leftChild.parent = node;
         			deleteValAndReorder(node.parent.leftChild, node.parent.leftChild.value2);
         			deleteValAndReorder(node.parent, node.parent.value2);
         			System.out.println("Tree is now root "+ root.value1 + " | left child | "+ root.leftChild.value1 + " | right child | "+root.rightChild.value1);
+        			
+        			
     			}
     			else if(node.parent.leftChild.isFourNode()) {
     				addValueToNode(node.parent, node.parent.leftChild.value3);
