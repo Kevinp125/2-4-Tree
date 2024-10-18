@@ -5,40 +5,58 @@ public class tester {
 	public static void main(String[] args) {
 		
 		TwoFourTree tft = new TwoFourTree();
-		int[] primeArray = new int[25];  // Array to hold the first 30 prime numbers
-        int count = 0;  // Counter to keep track of how many primes have been found
-        int num = 2;  // Start checking from 2 (the first prime number)
-
-
-	    while (count < 25) {
-            if (isPrime(num)) {
-                primeArray[count] = num;  // If it's prime, add it to the array
-                count++;  // Increment the prime counter
-            }
-            num++;  // Move to the next number to check
-        }
-	
-	    int iterCounter = 1;
-	    System.out.println();
-	   for(int i = 0; i<25;i++) {
-		  
-		   tft.addValue(primeArray[i]);
-		  
-		   iterCounter++;
-	   }
-	   
-	   tft.printInOrder();
-	   tft.deleteValue(37);
-       System.out.println("\nWithout 37:");
-       tft.printInOrder();
-       tft.deleteValue(73);
-       System.out.println("\nWithout 73:");
-       tft.printInOrder();
+//		int[] primeArray = new int[25];  // Array to hold the first 30 prime numbers
+//        int count = 0;  // Counter to keep track of how many primes have been found
+//        int num = 2;  // Start checking from 2 (the first prime number)
+//
+//
+//	    while (count < 25) {
+//            if (isPrime(num)) {
+//                primeArray[count] = num;  // If it's prime, add it to the array
+//                count++;  // Increment the prime counter
+//            }
+//            num++;  // Move to the next number to check
+//        }
+//	
+//	    int iterCounter = 1;
+//	    System.out.println();
+//	   for(int i = 0; i<25;i++) {
+//		  
+//		   tft.addValue(primeArray[i]);
+//		  
+//		   iterCounter++;
+//	   }
 //	   
+//	   tft.printInOrder();
+//	   tft.deleteValue(37);
+//       System.out.println("\nWithout 37:");
+//       tft.printInOrder();
+//       tft.deleteValue(73);
+//       System.out.println("\nWithout 73:");
+//       tft.printInOrder();
+//       tft.deleteValue(97);
+//       System.out.println("\nWithout 97:");
+//       tft.printInOrder();
+		
+        tft.addValue(2);
+        tft.addValue(3);
+        tft.addValue(5);
+        tft.addValue(7);
+        tft.addValue(11);
+        tft.addValue(13);
+        tft.addValue(17);
+        tft.addValue(19);
+        tft.addValue(23);
+        tft.addValue(29);
+        tft.printInOrder();
+        tft.deleteValue(7);
+        System.out.println("After deleting 7");
+        tft.printInOrder();
+        tft.deleteValue(11);
+        System.out.println("After deleting 11");
+        tft.printInOrder();
+//        
 	}
-	
-	
-	
 	
 	public static boolean isPrime(int number) {
 	    if (number <= 1) {

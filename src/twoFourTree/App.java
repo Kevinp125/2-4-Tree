@@ -1,4 +1,5 @@
 package twoFourTree;
+
 import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.Random;
@@ -57,7 +58,7 @@ public class App {
 		for (Integer e: strikes) {
 			sentinel = coll.hasValue(e.intValue());
 			if(sentinel == false) {
-//                 System.out.printf("\nFailed to find %d", e.intValue()); //ALSO need to comment this back uncommented for debugging purposes
+                // System.out.printf("\nFailed to find %d", e.intValue());
 				failures++;
 			}
 		}
@@ -106,8 +107,6 @@ public class App {
         start = System.currentTimeMillis();
         for (Integer e: intlist) {
             theTree.addValue(e.intValue());
-            
-            
         }
         end = System.currentTimeMillis();
         ms = end - start;
@@ -144,7 +143,7 @@ public class App {
         }
 	
 		System.out.printf("\n");
-//         theTree.printInOrder();     //COMMENT THIS LINE BACK ONCE U ARE DONE DEBUGGING THIS IS JUST TO  SEE THE TREE
+        // theTree.printInOrder();
 
         TreeSet<Integer> theComparison = new TreeSet<Integer>();
 
@@ -229,11 +228,11 @@ public class App {
         
 
         executeIntCase(100, 20, true);
-        executeIntCase(1000, 200, true);              
+        executeIntCase(1000, 200, true);
+        executeIntCase(10000, 2000, true);
         executeIntCase(100000, 20000, true);
         executeIntCase(1000000, 200000, true);
         executeIntCase(10000000, 2000000, true);
         
     }
 }
-
